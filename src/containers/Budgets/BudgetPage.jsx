@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import { withRouter } from 'react-router-dom';
 
@@ -10,18 +9,6 @@ import ExpenseItems from './ExpenseItems/ExpenseItems';
 import BudgetDetails from './BudgetDetails';
 import Service from '../../services/Service';
 import DailyChart from './DailyChart';
-
-const styles = {
-  budgetDetails: {
-    marginTop: '20px',
-    marginBottom: '50px'
-  },
-  backBtn: {
-    textDecoration: 'none',
-    display: 'block',
-    marginBottom: '24px'
-  }
-};
 
 class BudgetPage extends Component {
   constructor(props) {
@@ -53,8 +40,6 @@ class BudgetPage extends Component {
   }
 
   render() {
-    const { classes } = this.props;
-
     const { budget } = this.state;
     let budgetView = null;
     if (budget) {
@@ -94,4 +79,4 @@ class BudgetPage extends Component {
   }
 }
 
-export default withRouter(withStyles(styles)(BudgetPage));
+export default withRouter(BudgetPage);

@@ -36,7 +36,7 @@ function navigation(props) {
         <NavigationItem url="/" text="Home" icon={<Home />} exact />
         <NavigationItem url="/dashboard" text="Dashboard" exact />
         <NavigationItem url="/budgets" text="Budgets" />
-        <NavigationItem text="Create transactions" exact />
+        <NavigationItem text="Transactions" exact />
       </List>
     </Drawer>
   );
