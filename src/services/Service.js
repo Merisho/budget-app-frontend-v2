@@ -29,19 +29,36 @@ export default class BudgetService {
 
   static fetchAllUserBudgets(userId) {
     return this._postRequest(`
-    {
-      user(id: "${userId}") {
-        budgets {
-          id
-          name
-          total
-          allowed
-          startDate
-          endDate
+      {
+        user(id: "${userId}") {
+          budgets {
+            id
+            name
+            total
+            allowed
+            startDate
+            endDate
+          }
         }
       }
-    }
-  `);
+    `);
+  }
+
+  static fetchExpenseItem(expenseItemId) {
+    return this._postRequest(`
+      {
+        expenseItem(id: "${expenseItemId}") {
+          budgetID
+          transactions {
+            id
+            name
+            total
+            description
+            creationDate
+          }
+        }
+      }
+    `);
   }
 
   static async  _postRequest(body) {

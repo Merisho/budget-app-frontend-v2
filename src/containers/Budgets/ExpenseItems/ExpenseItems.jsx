@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
+import { Link, withRouter } from 'react-router-dom';
 
 import Money from '../../../components/Money/Money';
 
@@ -93,25 +94,30 @@ class ExpenseItems extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {this.props.items.map(i => (
-              <TableRow key={i.id}>
+            {this.props.items.map(expenseItem => (
+              <TableRow key={expenseItem.id}>
                 <TableCell>
-                  <Checkbox checked={!!this.state.selectedItems[i.id]} onChange={(event, checked) => this.setSelectState(i.id, checked)} />
-                </TableCell>
-                <TableCell>{i.name}</TableCell>
-                <TableCell>
-                  <Money value={i.total} />
+                  <Checkbox checked={!!this.state.selectedItems[expenseItem.id]}
+                    onChange={(event, checked) => this.setSelectState(expenseItem.id, checked)} />
                 </TableCell>
                 <TableCell>
-                  <Money value={i.transactionsTotal} />
+                  <Link to={'/budgets/expenseitem/' + expenseItem.id}>
+                    {expenseItem.name}
+                  </Link>
                 </TableCell>
                 <TableCell>
-                  <Money value={i.total - i.transactionsTotal} highlight />
+                  <Money value={expenseItem.total} />
+                </TableCell>
+                <TableCell>
+                  <Money value={expenseItem.transactionsTotal} />
+                </TableCell>
+                <TableCell>
+                  <Money value={expenseItem.total - expenseItem.transactionsTotal} highlight />
                 </TableCell>
                 <TableCell>
                   <DeleteForever color="error" />
                 </TableCell>
-                <TableCell>{i.description}</TableCell>
+                <TableCell>{expenseItem.description}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -121,4 +127,4 @@ class ExpenseItems extends Component {
   }
 }
 
-export default withStyles(styles)(ExpenseItems);
+export default withRouter(withStyles(styles)(ExpenseItems));

@@ -5,7 +5,7 @@ import Input from '@material-ui/core/Input';
 
 import BudgetTile from './BudgetTile';
 import Loading from '../../components/Loading/Loading';
-import BudgetService from '../../services/Budget';
+import Service from '../../services/Service';
 
 const styles = theme => ({
   search: {
@@ -31,7 +31,7 @@ class Budgets extends Component {
   }
 
   async loadBudgets() {
-    const res = await BudgetService.fetchAllUserBudgets('2fa434ad-5611-4e1e-8aa4-61616577bc72');
+    const res = await Service.fetchAllUserBudgets('2fa434ad-5611-4e1e-8aa4-61616577bc72');
     this.setState({
       budgets: res.data.user.budgets,
       displayedBudgets: res.data.user.budgets

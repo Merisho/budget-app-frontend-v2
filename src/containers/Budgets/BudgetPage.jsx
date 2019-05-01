@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
-import Button from '@material-ui/core/Button';
-import KeyboardBackspace from '@material-ui/icons/KeyboardBackspace';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 import Loading from '../../components/Loading/Loading';
+import BackButton from '../../components/Buttons/Back';
 import ExpenseItems from './ExpenseItems/ExpenseItems';
 import BudgetDetails from './BudgetDetails';
-import BudgetService from '../../services/Budget';
+import Service from '../../services/Service';
 import DailyChart from './DailyChart';
 
 const styles = {
@@ -39,7 +38,7 @@ class BudgetPage extends Component {
   }
 
   async loadBudget(budgetId) {
-    const res = await BudgetService.fetchBudget(budgetId);
+    const res = await Service.fetchBudget(budgetId);
     this.setState({
       budget: res.data.budget,
       displayedExpenseItems: res.data.budget.expenseItems
@@ -85,13 +84,8 @@ class BudgetPage extends Component {
 
     return (
       <div>
-        <Link to="/budgets" className={classes.backBtn}>
-          <Button variant="contained">
-            <KeyboardBackspace />
-            &nbsp;
-            Back to Budgets
-          </Button>
-        </Link>
+        <BackButton target="/budgets">Back to Budgets</BackButton>
+
         <Loading inProgress={!this.state.budget}>
           {budgetView}
         </Loading>
