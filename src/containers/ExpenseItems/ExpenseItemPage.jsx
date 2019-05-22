@@ -7,6 +7,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import DeleteForever from '@material-ui/icons/DeleteForever';
 
 import Service from '../../services/Service';
 import Loading from '../../components/Loading/Loading';
@@ -30,7 +32,10 @@ const styles = {
     width: '25%'
   },
   descriptionCell: {
-    width: '45%'
+    width: '35%'
+  },
+  actionsCell: {
+    width: '10%'
   }
 };
 
@@ -62,6 +67,11 @@ class ExpenseItemPage extends Component {
       expenseItemView = (
         <div>
           <BackButton target={'/budgets/' + this.state.expenseItem.budgetID}>To Budget</BackButton>
+
+          <Typography variant="h2">{this.state.expenseItem.name}</Typography>
+          <Typography color="textSecondary">
+            {this.state.expenseItem.description}
+          </Typography>
           
           <Paper className={classes.root}>
             <Table className={classes.table}>
@@ -71,6 +81,7 @@ class ExpenseItemPage extends Component {
                   <TableCell className={classes.totalCell}>Total</TableCell>
                   <TableCell className={classes.dateCell}>Date</TableCell>
                   <TableCell className={classes.descriptionCell}>Description</TableCell>
+                  <TableCell className={classes.actionsCell}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -82,6 +93,9 @@ class ExpenseItemPage extends Component {
                     </TableCell>
                     <TableCell>{transaction.creationDate}</TableCell>
                     <TableCell>{transaction.description}</TableCell>
+                    <TableCell>
+                      <DeleteForever color="error" />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

@@ -89,8 +89,8 @@ class ExpenseItems extends Component {
               <TableCell className={classes.totalCell}>Total</TableCell>
               <TableCell className={classes.spentCell}>Spent</TableCell>
               <TableCell className={classes.allowedCell}>Allowed</TableCell>
-              <TableCell className={classes.actionsCell}>Actions</TableCell>
               <TableCell className={classes.descriptionCell}>Description</TableCell>
+              <TableCell className={classes.actionsCell}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -114,10 +114,10 @@ class ExpenseItems extends Component {
                 <TableCell>
                   <Money value={expenseItem.total - expenseItem.transactionsTotal} highlight />
                 </TableCell>
+                <TableCell>{expenseItem.description}</TableCell>
                 <TableCell>
                   <DeleteForever color="error" />
                 </TableCell>
-                <TableCell>{expenseItem.description}</TableCell>
               </TableRow>
             ))}
           </TableBody>

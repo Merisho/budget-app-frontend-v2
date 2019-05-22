@@ -48,7 +48,9 @@ export default class BudgetService {
     return this._postRequest(`
       {
         expenseItem(id: "${expenseItemId}") {
+          name
           budgetID
+          description
           transactions {
             id
             name
