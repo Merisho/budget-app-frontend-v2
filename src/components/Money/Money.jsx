@@ -18,14 +18,33 @@ function money(props) {
   if (highlight) {
     className = value > 0 ? classes.positive : classes.negative;
   }
-  
-  const preparedValue = `₴${Math.round(+value) / 100}`;
+
+  const preparedValue = `₴${formatDigits(Math.round(+value) / 100)}`;
 
   return (
     <span className={className}>
       {preparedValue}
     </span>
   );
+}
+
+function formatDigits(n) {
+  const str = n.toString();
+  if (str.length <= 3) {
+      return str;
+  }
+
+  const mod = str.length % 3;
+  let formatted = str.slice(0, mod);
+  for (let i = mod; i <= str.length - 3; i += 3) {
+      if (formatted !== '') {
+          formatted += ',';
+      }
+
+      formatted += str.slice(i, i + 3);
+  }
+
+  return formatted;
 }
 
 export default withStyles(styles)(money);

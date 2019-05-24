@@ -5,14 +5,17 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import { Link, withRouter } from 'react-router-dom';
+import AddExpenseItemForm from './AddExpenseItemForm';
 
 import Money from '../../../components/Money/Money';
 
-const styles = {
+const styles = theme => ({
   root: {
     width: '100%'
   },
@@ -39,15 +42,28 @@ const styles = {
   },
   descriptionCell: {
     width: '35%'
+  },
+  deleteItem: {
+    color: theme.palette.action.delete,
+    cursor: 'pointer'
+  },
+  addItem: {
+    background: theme.palette.secondary.main,
+    color: theme.palette.secondaryText.white
+  },
+  approveNewItem: {
+    color: theme.palette.action.approve,
+    cursor: 'pointer'
   }
-};
+});
 
 class ExpenseItems extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selectedItems: {}
+      selectedItems: {},
+      addExpenseItemOpened: false
     };
   }
 
@@ -74,55 +90,83 @@ class ExpenseItems extends Component {
     this.setState({selectedItems});
   }
 
+  openAddExpenseItemForm = () => {
+    this.setState({
+      addExpenseItemOpened: true
+    });
+  }
+
+  closeAddExpenseItemForm = () => {
+    this.setState({
+      addExpenseItemOpened: false
+    });
+  }
+
   render() {
     const { classes } = this.props;
 
     return (
-      <Paper className={classes.root}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.checkCell}>
-                <Checkbox onChange={(event, checked) => this.setSelectStateForAll(checked)} />
-              </TableCell>
-              <TableCell className={classes.nameCell}>Name</TableCell>
-              <TableCell className={classes.totalCell}>Total</TableCell>
-              <TableCell className={classes.spentCell}>Spent</TableCell>
-              <TableCell className={classes.allowedCell}>Allowed</TableCell>
-              <TableCell className={classes.descriptionCell}>Description</TableCell>
-              <TableCell className={classes.actionsCell}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {this.props.items.map(expenseItem => (
-              <TableRow key={expenseItem.id}>
-                <TableCell>
-                  <Checkbox checked={!!this.state.selectedItems[expenseItem.id]}
-                    onChange={(event, checked) => this.setSelectState(expenseItem.id, checked)} />
+      <React.Fragment>
+        <Paper className={classes.root}>
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.checkCell}>
+                  <Checkbox onChange={(event, checked) => this.setSelectStateForAll(checked)} />
                 </TableCell>
-                <TableCell>
-                  <Link to={'/budgets/expenseitem/' + expenseItem.id}>
-                    {expenseItem.name}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <Money value={expenseItem.total} />
-                </TableCell>
-                <TableCell>
-                  <Money value={expenseItem.transactionsTotal} />
-                </TableCell>
-                <TableCell>
-                  <Money value={expenseItem.total - expenseItem.transactionsTotal} highlight />
-                </TableCell>
-                <TableCell>{expenseItem.description}</TableCell>
-                <TableCell>
-                  <DeleteForever color="error" />
-                </TableCell>
+                <TableCell className={classes.nameCell}>Name</TableCell>
+                <TableCell className={classes.totalCell}>Total</TableCell>
+                <TableCell className={classes.spentCell}>Spent</TableCell>
+                <TableCell className={classes.allowedCell}>Allowed</TableCell>
+                <TableCell className={classes.descriptionCell}>Description</TableCell>
+                <TableCell className={classes.actionsCell}>Actions</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
+            </TableHead>
+            <TableBody>
+              {this.props.items.map(expenseItem => (
+                <TableRow key={expenseItem.id}>
+                  <TableCell>
+                    <Checkbox checked={!!this.state.selectedItems[expenseItem.id]}
+                      onChange={(event, checked) => this.setSelectState(expenseItem.id, checked)} />
+                  </TableCell>
+                  <TableCell>
+                    <Link to={'/budgets/expenseitem/' + expenseItem.id}>
+                      {expenseItem.name}
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <Money value={expenseItem.total} />
+                  </TableCell>
+                  <TableCell>
+                    <Money value={expenseItem.transactionsTotal} />
+                  </TableCell>
+                  <TableCell>
+                    <Money value={expenseItem.total - expenseItem.transactionsTotal} highlight />
+                  </TableCell>
+                  <TableCell>{expenseItem.description}</TableCell>
+                  <TableCell>
+                    <DeleteForever className={classes.deleteItem} />
+                  </TableCell>
+                </TableRow>
+              ))}
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>
+                  <Fab color="primary" aria-label="Add" className={classes.fab} onClick={this.openAddExpenseItemForm}>
+                    <AddIcon />
+                  </Fab>
+                </TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Paper>
+        <AddExpenseItemForm open={this.state.addExpenseItemOpened} handleClose={this.closeAddExpenseItemForm} />
+      </React.Fragment>
     );
   }
 }
