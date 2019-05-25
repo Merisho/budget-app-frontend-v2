@@ -29,10 +29,7 @@ function money(props) {
 }
 
 function formatDigits(n) {
-  const str = n.toString();
-  if (str.length <= 3) {
-      return str;
-  }
+  const str = Math.abs(n).toString();
 
   const mod = str.length % 3;
   let formatted = str.slice(0, mod);
@@ -42,6 +39,10 @@ function formatDigits(n) {
       }
 
       formatted += str.slice(i, i + 3);
+  }
+
+  if (n < 0) {
+      formatted = '-' + formatted;
   }
 
   return formatted;

@@ -85,7 +85,7 @@ class ExpenseItemPage extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.state.expenseItem.transactions.map(transaction => (
+                {this.state.expenseItem.transactions && this.state.expenseItem.transactions.map(transaction => (
                   <TableRow key={transaction.id}>
                     <TableCell>{transaction.name}</TableCell>
                     <TableCell>

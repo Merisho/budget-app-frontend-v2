@@ -16,12 +16,19 @@ class BudgetPage extends Component {
 
     this.state = {
       budget: null,
-      displayedExpenseItems: []
+      displayedExpenseItems: [],
+      budgetId: ''
+    };
+  }
+
+  static getDerivedStateFromProps(props) {
+    return {
+      budgetId: props.match.params.id
     };
   }
 
   componentDidMount() {
-    this.loadBudget(this.props.match.params.id);
+    this.loadBudget(this.state.budgetId);
   }
 
   async loadBudget(budgetId) {
@@ -37,6 +44,10 @@ class BudgetPage extends Component {
     this.setState({
       displayedExpenseItems: expenseItems
     });
+  }
+
+  expenseItemCreated = () => {
+    this.loadBudget(this.state.budgetId);
   }
 
   render() {
@@ -62,7 +73,7 @@ class BudgetPage extends Component {
             </Typography>
             <Input type="text" placeholder="Search" onChange={event => this.searchExpenseItems(event.target.value)} />
           </div>
-          <ExpenseItems items={this.state.displayedExpenseItems} />
+          <ExpenseItems items={this.state.displayedExpenseItems} budgetId={this.props.match.params.id} expenseItemCreated={this.expenseItemCreated} />
         </div>
       );
     }

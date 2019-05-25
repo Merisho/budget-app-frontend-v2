@@ -33,7 +33,11 @@ function simpleLineChart(props) {
 
 function extractTransactions(budget) {
   const transactions = [];
-  budget.expenseItems.forEach(i => transactions.push(...i.transactions));
+  budget.expenseItems.forEach(i => {
+    if (i.transactions && i.transactions.length) {
+      transactions.push(...i.transactions)
+    }
+  });
 
   return transactions;
 }

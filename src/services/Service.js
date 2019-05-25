@@ -63,6 +63,24 @@ export default class BudgetService {
     `);
   }
 
+  static createExpenseItem(budgetId, data) {
+    const params = [`budgetID: "${budgetId}"`, `name: "${data.name}"`, `total: ${data.total}`];
+    if (data.description) {
+      params.push(`description: "${data.description}"`);
+    }
+
+    return this._postRequest(`
+      mutation {
+        addExpenseItem(${params.join(',')}) {
+          id
+          name
+          description
+          total
+        }
+      }
+    `);
+  }
+
   static async  _postRequest(body) {
     const res = await fetch(process.env.REACT_APP_API_URL, {
       method: 'POST',
