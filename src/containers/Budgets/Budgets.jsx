@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import Input from '@material-ui/core/Input';
+import { connect } from 'react-redux';
 
 import BudgetTile from './BudgetTile';
 import Loading from '../../components/Loading/Loading';
@@ -21,8 +22,7 @@ class Budgets extends Component {
     super(props);
 
     this.state = {
-      budgets: [],
-      displayedBudgets: []
+      displayedBudgets: props.budgets || []
     };
   }
 
@@ -31,16 +31,23 @@ class Budgets extends Component {
   }
 
   async loadBudgets() {
-    const res = await Service.fetchAllUserBudgets('2fa434ad-5611-4e1e-8aa4-61616577bc72');
-    this.setState({
-      budgets: res.data.user.budgets,
-      displayedBudgets: res.data.user.budgets
-    });
+    if (!this.props.user.id) {
+      throw new Error('No user');
+    }
+
+    if (!this.props.budgets) {
+      const res = await Service.fetchAllUserBudgets(this.props.user.id);
+      this.setState({
+        displayedBudgets: res.data.user.budgets
+      });
+
+      this.props.setAllBudgets(res.data.user.budgets);
+    }
   }
 
   searchBudget(query) {
     this.setState({
-      displayedBudgets: this.state.budgets.filter(b => b.name.includes(query))
+      displayedBudgets: this.props.budgets.filter(b => b.name.includes(query))
     });
   }
 
@@ -48,7 +55,7 @@ class Budgets extends Component {
     const { classes } = this.props;
     return (
       <div>
-        <Loading inProgress={this.state.budgets.length === 0}>
+        <Loading inProgress={!this.props.budgets}>
           <div className={classes.search}>
             <Input type="text" placeholder="Search" onChange={event => this.searchBudget(event.target.value)} />
           </div>
@@ -65,4 +72,12 @@ class Budgets extends Component {
   }
 }
 
-export default withStyles(styles)(Budgets);
+const mapStateToProps = state => ({
+  user: state.user,
+  budgets: state.allBudgets
+});
+const mapDispatchToProps = dispatch => ({
+  setAllBudgets: budgets => dispatch({ type: 'SET_ALL_BUDGETS', payload: { budgets } })
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Budgets));

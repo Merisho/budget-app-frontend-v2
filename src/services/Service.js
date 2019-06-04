@@ -3,6 +3,7 @@ export default class BudgetService {
     return this._postRequest(`
       {
         budget(id: "${id}") {
+          id
           name
           total
           startDate
@@ -48,6 +49,7 @@ export default class BudgetService {
     return this._postRequest(`
       {
         expenseItem(id: "${expenseItemId}") {
+          id
           name
           budgetID
           description

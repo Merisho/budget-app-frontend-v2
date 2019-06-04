@@ -111,7 +111,7 @@ class ExpenseItems extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {this.props.items.map(expenseItem => (
+            {this.props.items && this.props.items.length ? this.props.items.map(expenseItem => (
               <TableRow key={expenseItem.id}>
                 <TableCell>
                   <Checkbox checked={!!this.state.selectedItems[expenseItem.id]}
@@ -136,7 +136,7 @@ class ExpenseItems extends Component {
                   <DeleteForever className={classes.deleteItem} />
                 </TableCell>
               </TableRow>
-            ))}
+            )) : null}
             <TableRow>
               <TableCell></TableCell>
               <TableCell>

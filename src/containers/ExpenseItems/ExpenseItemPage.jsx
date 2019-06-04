@@ -9,6 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import DeleteForever from '@material-ui/icons/DeleteForever';
+import { connect } from 'react-redux';
 
 import Service from '../../services/Service';
 import Loading from '../../components/Loading/Loading';
@@ -42,10 +43,6 @@ const styles = {
 class ExpenseItemPage extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      expenseItem: null
-    };
   }
 
   componentDidMount() {
@@ -53,24 +50,24 @@ class ExpenseItemPage extends Component {
   }
 
   async loadExpenseItem(id) {
-    const res = await Service.fetchExpenseItem(id);
-    this.setState({
-      expenseItem: res.data.expenseItem
-    });
+    if (!this.props.expenseItem || this.props.expenseItem.id !== id) {
+      const res = await Service.fetchExpenseItem(id);
+      this.props.setExpenseItem(res.data.expenseItem);
+    }
   }
 
   render() {
     const { classes } = this.props;
 
     let expenseItemView = null;
-    if (this.state.expenseItem) {
+    if (this.props.expenseItem) {
       expenseItemView = (
         <div>
-          <BackButton target={'/budgets/' + this.state.expenseItem.budgetID}>To Budget</BackButton>
+          <BackButton target={'/budgets/' + this.props.expenseItem.budgetID}>To Budget</BackButton>
 
-          <Typography variant="h2">{this.state.expenseItem.name}</Typography>
+          <Typography variant="h2">{this.props.expenseItem.name}</Typography>
           <Typography color="textSecondary">
-            {this.state.expenseItem.description}
+            {this.props.expenseItem.description}
           </Typography>
           
           <Paper className={classes.root}>
@@ -85,7 +82,7 @@ class ExpenseItemPage extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.state.expenseItem.transactions && this.state.expenseItem.transactions.map(transaction => (
+                {this.props.expenseItem.transactions && this.props.expenseItem.transactions.map(transaction => (
                   <TableRow key={transaction.id}>
                     <TableCell>{transaction.name}</TableCell>
                     <TableCell>
@@ -106,11 +103,18 @@ class ExpenseItemPage extends Component {
     }
 
     return (
-      <Loading inProgress={!this.state.expenseItem}>
+      <Loading inProgress={!this.props.expenseItem}>
         {expenseItemView}
       </Loading>
     );
   }
 }
 
-export default withRouter(withStyles(styles)(ExpenseItemPage));
+const mapStateToProps = state => ({
+  expenseItem: state.currentExpenseItem
+});
+const mapDispatchToProps = dispatch => ({
+  setExpenseItem: expenseItem => dispatch({ type: 'SET_CURRENT_EXPENSE_ITEM', payload: { expenseItem } })
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(ExpenseItemPage)));
