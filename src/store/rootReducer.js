@@ -25,7 +25,7 @@ export default (state = init, action) => {
         currentExpenseItem: action.payload.expenseItem
       };
     case 'CREATE_EXPENSE_ITEM':
-      if (!state.currentBudget) {
+      if (!state.currentBudget || !action.payload.expenseItem) {
         return state;
       }
 

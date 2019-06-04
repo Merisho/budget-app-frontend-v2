@@ -87,10 +87,6 @@ class ExpenseItems extends Component {
     this.setState({selectedItems});
   }
 
-  expenseItemCreated = () => {
-    this.props.expenseItemCreated && this.props.expenseItemCreated();
-  }
-
   render() {
     const { classes } = this.props;
 
@@ -140,7 +136,7 @@ class ExpenseItems extends Component {
             <TableRow>
               <TableCell></TableCell>
               <TableCell>
-                <CreateExpenseItem budgetId={this.props.budgetId} created={this.expenseItemCreated} />
+                <CreateExpenseItem budgetId={this.props.budgetId} created={this.props.expenseItemCreated} />
               </TableCell>
               <TableCell></TableCell>
               <TableCell></TableCell>

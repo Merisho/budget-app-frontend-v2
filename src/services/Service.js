@@ -76,8 +76,13 @@ export default class BudgetService {
         addExpenseItem(${params.join(',')}) {
           id
           name
-          description
           total
+          description
+          transactionsTotal
+          transactions {
+            total
+            creationDate
+          }
         }
       }
     `);

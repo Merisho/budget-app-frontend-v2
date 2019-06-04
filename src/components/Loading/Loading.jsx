@@ -15,7 +15,7 @@ function loading(props) {
 
   return (
     <div>
-      {inProgress ? <Loading className={classes.loading} /> : children}
+      {inProgress ? <Loading className={props.className || classes.loading} /> : children}
     </div>
   );
 }

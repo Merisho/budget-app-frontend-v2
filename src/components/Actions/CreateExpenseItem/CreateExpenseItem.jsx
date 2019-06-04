@@ -6,7 +6,7 @@ import CreateExpenseItemForm from './CreateExpenseItemForm';
 import Service from '../../../services/Service';
 
 function CreateExpenseItem(props) {
-  const [formOpen, setFormOpenState] = React.useState(false);
+  const [ formOpen, setFormOpenState ] = React.useState(false);
 
   function open() {
     setFormOpenState(true);
