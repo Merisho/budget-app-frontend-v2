@@ -7,13 +7,17 @@ import { connect } from 'react-redux';
 import BudgetTile from './BudgetTile';
 import Loading from '../../components/Loading/Loading';
 import Service from '../../services/Service';
+import CreateBudget from '../../components/Actions/CreateBudget/CreateBudget';
 
 const styles = theme => ({
-  search: {
+  actionBar: {
     marginBottom: '32px'
   },
   budgetLink: {
     overflow: 'hidden'
+  },
+  search: {
+    margin: '0 32px 0 0'
   }
 });
 
@@ -56,8 +60,9 @@ class Budgets extends Component {
     return (
       <div>
         <Loading inProgress={!this.props.budgets}>
-          <div className={classes.search}>
-            <Input type="text" placeholder="Search" onChange={event => this.searchBudget(event.target.value)} />
+          <div className={classes.actionBar}>
+            <Input type="text" placeholder="Search" onChange={event => this.searchBudget(event.target.value)} className={classes.search} />
+            <CreateBudget />
           </div>
           {this.state.displayedBudgets.map(b => {
             return (
