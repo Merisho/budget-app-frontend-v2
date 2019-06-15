@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import withRoot from './withRoot';
 import Navigation from './components/Navigation/Navigation';
@@ -9,6 +10,7 @@ import Dashboard from './containers/Dashboard/Dashboard';
 import Budgets from './containers/Budgets/Budgets';
 import BudgetPage from './containers/Budgets/BudgetPage';
 import ExpenseItemPage from './containers/ExpenseItems/ExpenseItemPage';
+import ErrorSnackbar from './components/Snackbars/ErrorSnackbar';
 
 const styles = theme => ({
   root: {
@@ -42,6 +44,8 @@ class App extends React.Component {
             </Switch>
           </main>
         </BrowserRouter>
+
+        <ErrorSnackbar message={this.props.errorMessage} open={this.props.showError} handleClose={this.props.hideError} />
       </div>
     );
   }
@@ -51,4 +55,12 @@ App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withRoot(withStyles(styles)(App));
+const mapStateToProps = state => ({
+  errorMessage: state.errorMessage,
+  showError: state.showError
+});
+const mapDispatchToProps = dispatch => ({
+  hideError: () => dispatch({ type: 'HIDE_ERROR' })
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRoot(withStyles(styles)(App)));

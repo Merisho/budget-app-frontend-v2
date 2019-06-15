@@ -132,6 +132,16 @@ export default class BudgetService {
     return res.addBudget;
   }
 
+  static async deleteBudget(budgetId) {
+    await this._postRequest(`
+      mutation {
+        deleteBudget(id: "${budgetId}") {
+          id
+        }
+      }
+    `);
+  }
+
   static async  _postRequest(body) {
     const res = await fetch(process.env.REACT_APP_API_URL, {
       method: 'POST',

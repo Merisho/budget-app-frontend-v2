@@ -3,82 +3,124 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import {withStyles} from '@material-ui/core';
+import DeleteForever from '@material-ui/icons/DeleteForever';
 
 import Money from '../../components/Money/Money';
-
+import DeleteBudgetConfirmation from './DeleteBudgetConfirmation';
 import utils from './utils';
+import Service from '../../services/Service';
 
 const styles = theme => {
   const nameColor = theme.palette.primary.dark;
 
+  const tileHeightTransition = theme.transitions.create('height', {
+    easing: theme.transitions.easing.easeInOut,
+    duration: theme.transitions.duration.shorter
+  });
   return {
-    card: {
-      width: '16%',
+    tile: {
+      width: '22%',
       minWidth: 200,
-      minHeight: 180,
+      margin: '0 40px 30px 0',
+      height: 120,
       display: 'inline-block',
-      margin: '0 40px 30px 0'
-    },
-    inactiveCard: {
-      opacity: 0.5,
       '&:hover': {
-        opacity: 1,
-        '& h4': {
-          color: nameColor
-        }
+        height: 252,
+        transition: tileHeightTransition,
       },
-      '& h4': {
-        color: theme.palette.state.inactive
-      },
-      transition: theme.transitions.create('opacity', {
-        easing: theme.transitions.easing.easeInOut,
-        duration: theme.transitions.duration.shorter,
-      }),
+      transition: tileHeightTransition
     },
     budgetName: {
       color: nameColor
+    },
+    budgetStats: {
+      overflow: 'hidden',
+      width: '100%',
+      margin: '12px 0 0 0'
+    },
+    statsItem: {
+      width: '45%',
+      float: 'left'
+    },
+    delete: {
+      width: '100%',
+      margin: '16px 0 0 0',
+      padding: '8px 0',
+      textAlign: 'center',
+      color: 'white',
+      background: theme.palette.action.delete
     }
   };
 };
 
 function budgetTile(props) {
-  const {data: budget} = props;
+  const [ confirmDeletion, setConfirmDeletion ] = React.useState(false);
+  const {budget} = props;
   const {classes} = props;
   const startDate = utils.formatDate(budget.startDate);
   const endDate = utils.formatDate(budget.endDate);
 
-  const cardClasses = [classes.card];
-  const current = isCurrent(budget);
-  if (!current) {
-    cardClasses.push(classes.inactiveCard);
+  function deleteBudget(e) {
+    e.preventDefault();
+    setConfirmDeletion(true);
+  }
+
+  function cancelDeletion(e) {
+    e.preventDefault();
+    setConfirmDeletion(false);
+  }
+
+  async function acceptDeletion(e) {
+    e.preventDefault();
+    try {
+      await Service.deleteBudget(budget.id);
+      setConfirmDeletion(false);
+      props.deleted && props.deleted(budget);
+    } catch(err) {
+      props.onError && props.onError('An error occured. Please try again');
+      console.error(err);
+    }
   }
 
   return (
-    <Card className={cardClasses.join(' ')}>
-      <CardContent>
-        <Typography variant="h4" className={classes.budgetName}>
-          {budget.name}
-        </Typography>
-        <Typography>
-          {startDate} - {endDate}
-        </Typography>
-        <Typography>
-          {budget.total}
-        </Typography>
-        <Typography>
-          <Money value={budget.allowed} highlight />
-        </Typography>
-      </CardContent>
-    </Card>
+    <React.Fragment>
+      <Card className={classes.tile}>
+        <CardContent>
+          <Typography variant="h4" className={classes.budgetName}>
+            {budget.name}
+          </Typography>
+          <Typography variant="h6">
+            Period
+          </Typography>
+          <Typography>
+            {startDate} - {endDate}
+          </Typography>
+          <div className={classes.budgetStats}>
+            <div className={classes.statsItem}>
+              <Typography variant="h6">
+                Total
+              </Typography>
+              <Typography>
+                <Money value={budget.total} highlight />
+              </Typography>
+            </div>
+            <div className={classes.statsItem}>
+              <Typography variant="h6">
+                Allowed
+              </Typography>
+              <Typography>
+                <Money value={budget.allowed} highlight />
+              </Typography>
+            </div>
+          </div>
+        </CardContent>
+        <div className={classes.delete} onClick={deleteBudget}>
+          <DeleteForever />
+        </div>
+      </Card>
+      <DeleteBudgetConfirmation open={confirmDeletion} handleCancel={cancelDeletion} handleOK={acceptDeletion} budgetName={budget.name} />
+    </React.Fragment>
   );
-}
-
-function isCurrent(budget) {
-  const now = new Date();
-  const start = new Date(budget.startDate);
-  const end = new Date(budget.endDate);
-
-  return now >= start && now < end;
 }
 
 export default withStyles(styles)(budgetTile);
