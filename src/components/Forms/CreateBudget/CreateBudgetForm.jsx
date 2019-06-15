@@ -5,11 +5,12 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+
+import MoneyField from '../../Money/MoneyField';
 
 const styles = {
   grid: {
@@ -44,6 +45,26 @@ function reducer(state, action) {
         ...state,
         endDate: action.payload.endDate
       };
+    case 'SET_NAME_INVALID_STATUS':
+      return {
+        ...state,
+        invalidName: action.payload.invalid
+      };
+    case 'SET_TOTAL_INVALID_STATUS':
+      return {
+        ...state,
+        invalidTotal: action.payload.invalid
+      };
+    case 'SET_START_DATE_INVALID_STATUS':
+      return {
+        ...state,
+        invalidStartDate: action.payload.invalid
+      };
+    case 'SET_END_DATE_INVALID_STATUS':
+      return {
+        ...state,
+        invalidEndDate: action.payload.invalid
+      };
     default:
       return state;
   }
@@ -54,8 +75,12 @@ function CreateExpenseItemForm(props) {
     name: '',
     total: 1000,
     description: '',
-    startDate: new Date(),
-    endDate: new Date()
+    startDate: null,
+    endDate: null,
+    invalidName: false,
+    invalidTotal: false,
+    invalidStartDate: false,
+    invalidEndDate: false
   });
 
   function changeName(e) {
@@ -67,11 +92,11 @@ function CreateExpenseItemForm(props) {
     });
   }
 
-  function changeTotal(e) {
+  function changeTotal(value) {
     dispatch({
       type: 'SET_TOTAL',
       payload: {
-        total: e.target.value.replace(/,/g, '')
+        total: value
       }
     });
   }
@@ -100,7 +125,51 @@ function CreateExpenseItemForm(props) {
   }
 
   function create() {
+    dispatch({
+      type: 'SET_NAME_INVALID_STATUS',
+      payload: {
+        invalid: !state.name
+      }
+    });
+    dispatch({
+      type: 'SET_TOTAL_INVALID_STATUS',
+      payload: {
+        invalid: !state.total
+      }
+    });
+    dispatch({
+      type: 'SET_START_DATE_INVALID_STATUS',
+      payload: {
+        invalid: !state.startDate
+      }
+    });
+    dispatch({
+      type: 'SET_END_DATE_INVALID_STATUS',
+      payload: {
+        invalid: !state.endDate
+      }
+    });
 
+    if (state.startDate >= state.endDate) {
+      dispatch({
+        type: 'SET_START_DATE_INVALID_STATUS',
+        payload: {
+          invalid: true
+        }
+      });
+    }
+
+    if (!state.name || !state.total || !state.startDate || !state.endDate || state.startDate > state.endDate) {
+      return;
+    }
+
+    props.handleCreate && props.handleCreate({
+      name: state.name,
+      total: state.total,
+      description: state.description,
+      startDate: state.startDate,
+      endDate: state.endDate
+    });
   }
 
   return (
@@ -111,6 +180,7 @@ function CreateExpenseItemForm(props) {
           <TextField
             autoFocus
             required
+            error={state.invalidName}
             id="name"
             margin="dense"
             label="Name"
@@ -120,24 +190,25 @@ function CreateExpenseItemForm(props) {
             onChange={changeName}
             fullWidth
           />
-          <TextField
+          <MoneyField
             id="total"
             required
+            error={state.invalidTotal}
             margin="dense"
             label="Total"
             type="text"
             variant="outlined"
-            value={state.total}
+            defaultValue={state.total}
             onChange={changeTotal}
-            InputProps={{
-              startAdornment: <InputAdornment position="start">₴</InputAdornment>,
-            }}
+            currencyPrefix="₴"
             fullWidth
           />
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container className={props.classes.grid} justify="space-between">
               <DatePicker
                 margin="normal"
+                required
+                error={state.invalidStartDate}
                 id="start-date"
                 label="Start date"
                 value={state.startDate}
@@ -145,6 +216,8 @@ function CreateExpenseItemForm(props) {
               />
               <DatePicker
                 margin="normal"
+                required
+                error={state.invalidEndDate}
                 id="end-date"
                 label="End date"
                 value={state.endDate}
@@ -170,30 +243,6 @@ function CreateExpenseItemForm(props) {
       </DialogActions>
     </Dialog>
   );
-}
-
-function formatDigits(n) {
-  const str = Math.abs(n).toString();
-
-  const mod = str.length % 3;
-  let formatted = str.slice(0, mod);
-  for (let i = mod; i <= str.length - 3; i += 3) {
-      if (formatted !== '') {
-          formatted += ',';
-      }
-
-      formatted += str.slice(i, i + 3);
-  }
-
-  if (n < 0) {
-      formatted = '-' + formatted;
-  }
-
-  return formatted;
-}
-
-function prepareTotal(total) {
-  return total.toString().replace(/,/g, '');
 }
 
 export default withStyles(styles)(CreateExpenseItemForm);

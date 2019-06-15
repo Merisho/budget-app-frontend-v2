@@ -47,8 +47,8 @@ class ExpenseItemPage extends Component {
 
   async loadExpenseItem(id) {
     if (!this.props.expenseItem || this.props.expenseItem.id !== id) {
-      const res = await Service.fetchExpenseItem(id);
-      this.props.setExpenseItem(res.data.expenseItem);
+      const expenseItem = await Service.fetchExpenseItem(id);
+      this.props.setExpenseItem(expenseItem);
     }
   }
 

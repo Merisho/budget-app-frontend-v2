@@ -1,8 +1,7 @@
 import React from 'react';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
+import Button from '@material-ui/core/Button';
 
-import CreateExpenseItemForm from './CreateExpenseItemForm';
+import CreateExpenseItemForm from '../../Forms/CreateExpenseItem/CreateExpenseItemForm';
 import Service from '../../../services/Service';
 
 function CreateExpenseItem(props) {
@@ -17,21 +16,19 @@ function CreateExpenseItem(props) {
   }
 
   async function create(data) {
+    close();
     const item = await Service.createExpenseItem(props.budgetId, {
       name: data.name,
       total: +data.total * 100,
       description: data.descr
     });
 
-    close();
-    props.created && props.created(item.data.addExpenseItem);
+    props.created && props.created(item);
   }
 
   return (
     <React.Fragment>
-      <Fab color="primary" aria-label="Add" onClick={open}>
-        <AddIcon />
-      </Fab>
+      <Button variant="contained" color="primary" onClick={open}>Create Expense Item</Button>
       <CreateExpenseItemForm open={formOpen} handleClose={close} handleCreate={create} />
     </React.Fragment>
   );

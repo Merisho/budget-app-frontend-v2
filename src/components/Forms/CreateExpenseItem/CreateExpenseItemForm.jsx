@@ -5,18 +5,15 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import InputAdornment from '@material-ui/core/InputAdornment';
+
+import MoneyField from '../../Money/MoneyField';
 
 function CreateExpenseItemForm(props) {
-  const [total, setTotal] = React.useState('100');
+  const [total, setTotal] = React.useState(100);
   const [name, setName] = React.useState('');
   const [descr, setDescr] = React.useState('');
   const [nameInvalid, setNameInvalid] = React.useState(false);
   const [totalInvalid, setTotalInvalid] = React.useState(false);
-
-  function totalChanged(e) {
-    setTotal(formatDigits(e.target.value.replace(/,/g, '')));
-  }
 
   function create() {
     setNameInvalid(!name);
@@ -28,7 +25,7 @@ function CreateExpenseItemForm(props) {
 
     props.handleCreate({
       name,
-      total: prepareTotal(total),
+      total,
       descr
     });
   }
@@ -51,7 +48,7 @@ function CreateExpenseItemForm(props) {
             onChange={e => setName(e.target.value)}
             fullWidth
           />
-          <TextField
+          <MoneyField
             id="total"
             required
             error={totalInvalid}
@@ -59,11 +56,9 @@ function CreateExpenseItemForm(props) {
             label="Total"
             type="text"
             variant="outlined"
-            value={total}
-            onChange={totalChanged}
-            InputProps={{
-              startAdornment: <InputAdornment position="start">₴</InputAdornment>,
-            }}
+            defaultValue={total}
+            onChange={setTotal}
+            currencyPrefix="₴"
             fullWidth
           />
           <TextField
@@ -84,30 +79,6 @@ function CreateExpenseItemForm(props) {
       </DialogActions>
     </Dialog>
   );
-}
-
-function formatDigits(n) {
-  const str = Math.abs(n).toString();
-
-  const mod = str.length % 3;
-  let formatted = str.slice(0, mod);
-  for (let i = mod; i <= str.length - 3; i += 3) {
-      if (formatted !== '') {
-          formatted += ',';
-      }
-
-      formatted += str.slice(i, i + 3);
-  }
-
-  if (n < 0) {
-      formatted = '-' + formatted;
-  }
-
-  return formatted;
-}
-
-function prepareTotal(total) {
-  return total.toString().replace(/,/g, '');
 }
 
 export default CreateExpenseItemForm;

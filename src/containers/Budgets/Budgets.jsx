@@ -26,6 +26,13 @@ class Budgets extends Component {
     super(props);
 
     this.state = {
+      displayedBudgets: []
+    };
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    return {
+      ...state,
       displayedBudgets: props.budgets || []
     };
   }
@@ -40,12 +47,12 @@ class Budgets extends Component {
     }
 
     if (!this.props.budgets) {
-      const res = await Service.fetchAllUserBudgets(this.props.user.id);
+      const budgets = await Service.fetchAllUserBudgets(this.props.user.id);
       this.setState({
-        displayedBudgets: res.data.user.budgets
+        displayedBudgets: budgets
       });
 
-      this.props.setAllBudgets(res.data.user.budgets);
+      this.props.setAllBudgets(budgets);
     }
   }
 
@@ -55,6 +62,10 @@ class Budgets extends Component {
     });
   }
 
+  handleBudgetCreated = budget => {
+    this.props.createBudget(budget);
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -62,7 +73,7 @@ class Budgets extends Component {
         <Loading inProgress={!this.props.budgets}>
           <div className={classes.actionBar}>
             <Input type="text" placeholder="Search" onChange={event => this.searchBudget(event.target.value)} className={classes.search} />
-            <CreateBudget />
+            <CreateBudget user={this.props.user} created={this.handleBudgetCreated} />
           </div>
           {this.state.displayedBudgets.map(b => {
             return (
@@ -82,7 +93,8 @@ const mapStateToProps = state => ({
   budgets: state.allBudgets
 });
 const mapDispatchToProps = dispatch => ({
-  setAllBudgets: budgets => dispatch({ type: 'SET_ALL_BUDGETS', payload: { budgets } })
+  setAllBudgets: budgets => dispatch({ type: 'SET_ALL_BUDGETS', payload: { budgets } }),
+  createBudget: budget => dispatch({ type: 'CREATE_BUDGET', payload: { budget } })
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Budgets));

@@ -19,6 +19,12 @@ export default (state = init, action) => {
         ...state,
         allBudgets: action.payload.budgets
       };
+    case 'CREATE_BUDGET': {
+      return {
+        ...state,
+        allBudgets: [ action.payload.budget, ...state.allBudgets ]
+      };
+    }
     case 'SET_CURRENT_EXPENSE_ITEM':
       return {
         ...state,
@@ -33,7 +39,7 @@ export default (state = init, action) => {
         ...state,
         currentBudget: {
           ...state.currentBudget,
-          expenseItems: [ ...state.currentBudget.expenseItems, action.payload.expenseItem ]
+          expenseItems: [ action.payload.expenseItem, ...state.currentBudget.expenseItems ]
         }
       };
     default:

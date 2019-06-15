@@ -9,7 +9,6 @@ import DeleteForever from '@material-ui/icons/DeleteForever';
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import { Link, withRouter } from 'react-router-dom';
-import CreateExpenseItem from '../../../components/Actions/CreateExpenseItem/CreateExpenseItem';
 
 import Money from '../../../components/Money/Money';
 
@@ -133,17 +132,6 @@ class ExpenseItems extends Component {
                 </TableCell>
               </TableRow>
             )) : null}
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell>
-                <CreateExpenseItem budgetId={this.props.budgetId} created={this.props.expenseItemCreated} />
-              </TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
           </TableBody>
         </Table>
       </Paper>

@@ -3,6 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import Input from '@material-ui/core/Input';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { withStyles } from '@material-ui/core/styles';
 
 import Loading from '../../components/Loading/Loading';
 import BackButton from '../../components/Buttons/Back';
@@ -10,6 +11,18 @@ import ExpenseItems from './ExpenseItems/ExpenseItems';
 import BudgetDetails from './BudgetDetails';
 import Service from '../../services/Service';
 import DailyChart from './DailyChart';
+import CreateExpenseItem from '../../components/Actions/CreateExpenseItem/CreateExpenseItem';
+
+const styles = {
+  expenseItemsSeacrh: {
+    width: '20%',
+    marginRight: '32px'
+  },
+
+  expenseItemsHeader: {
+    marginBottom: '16px'
+  }
+};
 
 class BudgetPage extends Component {
   constructor(props) {
@@ -42,12 +55,12 @@ class BudgetPage extends Component {
 
   async loadBudget(budgetId) {
     if (!this.props.budget || this.props.budget.id !== budgetId) {
-      const res = await Service.fetchBudget(budgetId);
+      const budget = await Service.fetchBudget(budgetId);
       this.setState({
-        displayedExpenseItems: res.data.budget.expenseItems
+        displayedExpenseItems: budget.expenseItems
       });
 
-      this.props.setBudget(res.data.budget);
+      this.props.setBudget(budget);
     }
 
     this.setState({ loading: false });
@@ -65,7 +78,7 @@ class BudgetPage extends Component {
   }
 
   render() {
-    const { budget } = this.props;
+    const { budget, classes } = this.props;
     let budgetView = null;
     if (budget) {
       budgetView = (
@@ -81,13 +94,14 @@ class BudgetPage extends Component {
 
           <DailyChart budget={budget} />
 
-          <div>
+          <div className={classes.expenseItemsHeader}>
             <Typography variant="h4" gutterBottom>
               Expense Items
             </Typography>
-            <Input type="text" placeholder="Search" onChange={event => this.searchExpenseItems(event.target.value)} />
+            <Input type="text" placeholder="Search" className={classes.expenseItemsSeacrh} onChange={event => this.searchExpenseItems(event.target.value)} />
+            <CreateExpenseItem budgetId={this.budgetId} created={this.expenseItemCreated} />
           </div>
-          <ExpenseItems items={this.state.displayedExpenseItems} budgetId={this.budgetId} expenseItemCreated={this.expenseItemCreated} />
+          <ExpenseItems items={this.state.displayedExpenseItems} />
         </div>
       );
     }
@@ -117,4 +131,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(BudgetPage));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(BudgetPage)));

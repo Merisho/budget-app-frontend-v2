@@ -1,6 +1,6 @@
 export default class BudgetService {
-  static fetchBudget(id) {
-    return this._postRequest(`
+  static async fetchBudget(id) {
+    const res = await this._postRequest(`
       {
         budget(id: "${id}") {
           id
@@ -26,10 +26,12 @@ export default class BudgetService {
         }
       }
     `);
+
+    return res.budget;
   }
 
-  static fetchAllUserBudgets(userId) {
-    return this._postRequest(`
+  static async fetchAllUserBudgets(userId) {
+    const res = await this._postRequest(`
       {
         user(id: "${userId}") {
           budgets {
@@ -43,10 +45,12 @@ export default class BudgetService {
         }
       }
     `);
+
+    return res.user.budgets;
   }
 
-  static fetchExpenseItem(expenseItemId) {
-    return this._postRequest(`
+  static async fetchExpenseItem(expenseItemId) {
+    const res = await this._postRequest(`
       {
         expenseItem(id: "${expenseItemId}") {
           id
@@ -63,15 +67,17 @@ export default class BudgetService {
         }
       }
     `);
+
+    return res.expenseItem;
   }
 
-  static createExpenseItem(budgetId, data) {
+  static async createExpenseItem(budgetId, data) {
     const params = [`budgetID: "${budgetId}"`, `name: "${data.name}"`, `total: ${data.total}`];
     if (data.description) {
       params.push(`description: "${data.description}"`);
     }
 
-    return this._postRequest(`
+    const res = await this._postRequest(`
       mutation {
         addExpenseItem(${params.join(',')}) {
           id
@@ -86,6 +92,44 @@ export default class BudgetService {
         }
       }
     `);
+
+    return res.addExpenseItem;
+  }
+
+  static async createBudget(data) {
+    const params = [
+      `userID: "${data.userId}"`,
+      `name: "${data.name}"`,
+      `total: ${data.total}`
+    ];
+
+    if (data.startDate) {
+      params.push(`startDate: "${data.startDate.toISOString()}"`);
+    }
+
+    if (data.endDate) {
+      params.push(`endDate: "${data.endDate.toISOString()}"`);
+    }
+
+    if (data.description) {
+      params.push(`description: "${data.description}"`);
+    }
+
+    const res = await this._postRequest(`
+      mutation {
+        addBudget(${params.join(',')}) {
+          id
+          name
+          startDate
+          endDate
+          description
+          total
+          allowed
+        }
+      }
+    `);
+
+    return res.addBudget;
   }
 
   static async  _postRequest(body) {
@@ -94,6 +138,7 @@ export default class BudgetService {
       body
     });
 
-    return res.json();
+    const {data} = await res.json();
+    return data;
   }
 };

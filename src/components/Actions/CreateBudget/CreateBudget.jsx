@@ -1,7 +1,8 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 
-import CreateBudgetForm from './CreateBudgetForm';
+import CreateBudgetForm from '../../Forms/CreateBudget/CreateBudgetForm';
+import Service from '../../../services/Service';
 
 function CreateBudget(props) {
   const [ formOpen, setFormOpenState ] = React.useState(false);
@@ -15,14 +16,17 @@ function CreateBudget(props) {
   }
 
   async function create(data) {
-    // const item = await Service.createExpenseItem(props.budgetId, {
-    //   name: data.name,
-    //   total: +data.total * 100,
-    //   description: data.descr
-    // });
+    const budget = await Service.createBudget({
+      userId: props.user.id,
+      name: data.name,
+      total: +data.total * 100,
+      description: data.description,
+      startDate: data.startDate,
+      endDate: data.endDate
+    });
 
     close();
-    props.created && props.created();
+    props.created && props.created(budget);
   }
   
   return (
