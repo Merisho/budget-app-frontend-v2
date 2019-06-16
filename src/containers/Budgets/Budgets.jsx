@@ -65,6 +65,7 @@ class Budgets extends Component {
 
   handleBudgetCreated = budget => {
     this.props.createBudget(budget);
+    this.props.showSuccess(`Budget "${budget.name}" has been created`);
   }
 
   budgetLinkTile = budget => {
@@ -77,6 +78,7 @@ class Budgets extends Component {
 
   budgetDeleted = budget => {
     this.props.deleteBudget(budget.id);
+    this.props.showSuccess(`Budget "${budget.name}" has been deleted`);
   }
 
   budgetTileError = errMessage => {
@@ -122,7 +124,8 @@ const mapDispatchToProps = dispatch => ({
   setAllBudgets: budgets => dispatch({ type: 'SET_ALL_BUDGETS', payload: { budgets } }),
   createBudget: budget => dispatch({ type: 'CREATE_BUDGET', payload: { budget } }),
   deleteBudget: budgetId => dispatch({ type: 'DELETE_BUDGET', payload: { budgetId } }),
-  showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } })
+  showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } }),
+  showSuccess: message => dispatch({ type: 'SHOW_SUCCESS', payload: { message } })
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Budgets));

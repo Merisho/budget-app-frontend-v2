@@ -142,6 +142,16 @@ export default class BudgetService {
     `);
   }
 
+  static async deleteExpenseItem(expenseItemId) {
+    await this._postRequest(`
+      mutation {
+        deleteExpenseItem(id: "${expenseItemId}") {
+          id
+        }
+      }
+    `);
+  }
+
   static async  _postRequest(body) {
     const res = await fetch(process.env.REACT_APP_API_URL, {
       method: 'POST',

@@ -75,6 +75,16 @@ class BudgetPage extends Component {
 
   expenseItemCreated = expenseItem => {
     this.props.createExpenseItem(expenseItem);
+    this.props.showSuccess(`Expense item "${expenseItem.name}" has been created`);
+  }
+
+  expenseItemDeleted = expenseItem => {
+    this.props.deleteExpenseItem(expenseItem.id);
+    this.props.showSuccess(`Expense item "${expenseItem.name}" has been deleted`);
+  }
+
+  handleError = errMessage => {
+    this.props.showError(errMessage);
   }
 
   render() {
@@ -101,7 +111,7 @@ class BudgetPage extends Component {
             <Input type="text" placeholder="Search" className={classes.expenseItemsSeacrh} onChange={event => this.searchExpenseItems(event.target.value)} />
             <CreateExpenseItem budgetId={this.budgetId} created={this.expenseItemCreated} />
           </div>
-          <ExpenseItems items={this.state.displayedExpenseItems} />
+          <ExpenseItems items={this.state.displayedExpenseItems} expenseItemDeleted={this.expenseItemDeleted} onError={this.handleError} />
         </div>
       );
     }
@@ -127,7 +137,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setBudget: budget => dispatch({ type: 'SET_CURRENT_BUDGET', payload: { budget } }),
-    createExpenseItem: expenseItem => dispatch({ type: 'CREATE_EXPENSE_ITEM', payload: { expenseItem } })
+    createExpenseItem: expenseItem => dispatch({ type: 'CREATE_EXPENSE_ITEM', payload: { expenseItem } }),
+    deleteExpenseItem: expenseItemId => dispatch({ type: 'DELETE_EXPENSE_ITEM', payload: { expenseItemId } }),
+    showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } }),
+    showSuccess: message => dispatch({ type: 'SHOW_SUCCESS', payload: { message } })
   };
 };
 

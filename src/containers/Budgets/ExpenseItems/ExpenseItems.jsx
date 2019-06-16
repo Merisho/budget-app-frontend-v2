@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,6 +12,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { Link, withRouter } from 'react-router-dom';
 
 import Money from '../../../components/Money/Money';
+import DeleteExpenseItemConfirmation from './DeleteExpenseItemConfirmation';
+import Service from '../../../services/Service';
 
 const styles = theme => ({
   root: {
@@ -59,7 +62,9 @@ class ExpenseItems extends Component {
     super(props);
 
     this.state = {
-      selectedItems: {}
+      selectedItems: {},
+      confirmDeletion: false,
+      expenseItemToDelete: null
     };
   }
 
@@ -84,6 +89,38 @@ class ExpenseItems extends Component {
     }
 
     this.setState({selectedItems});
+  }
+
+  handleDelete = expenseItem => {
+    this.setState({
+      confirmDeletion: true,
+      expenseItemToDelete: expenseItem
+    });
+  }
+
+  cancelDeletion = () => {
+    this.setState({
+      confirmDeletion: false,
+      expenseItemToDelete: null
+    });
+  }
+
+  acceptDeletion = async () => {
+    if (!this.state.expenseItemToDelete) {
+      return;
+    }
+
+    try {
+      await Service.deleteExpenseItem(this.state.expenseItemToDelete.id);
+      this.props.expenseItemDeleted && this.props.expenseItemDeleted(this.state.expenseItemToDelete);
+      this.setState({
+        confirmDeletion: false,
+        expenseItemToDelete: null
+      });
+    } catch(err) {
+      console.error(err);
+      this.props.onError('An error occured. Please try again');
+    }
   }
 
   render() {
@@ -128,15 +165,26 @@ class ExpenseItems extends Component {
                 </TableCell>
                 <TableCell>{expenseItem.description}</TableCell>
                 <TableCell>
-                  <DeleteForever className={classes.deleteItem} />
+                  <DeleteForever onClick={() => this.handleDelete(expenseItem)} className={classes.deleteItem} />
                 </TableCell>
               </TableRow>
             )) : null}
           </TableBody>
         </Table>
+        <DeleteExpenseItemConfirmation
+          open={this.state.confirmDeletion}
+          handleCancel={this.cancelDeletion}
+          handleOK={this.acceptDeletion}
+          expenseItemName={this.state.expenseItemToDelete ? this.state.expenseItemToDelete.name : ''}
+        />
       </Paper>
     );
   }
 }
+
+ExpenseItems.propTypes = {
+  onError: PropTypes.func.isRequired,
+  expenseItemDeleted: PropTypes.func
+};
 
 export default withRouter(withStyles(styles)(ExpenseItems));

@@ -1,10 +1,10 @@
 import React from 'react';
 
-import DeleteConfirmationDialog from '../../components/Dialogs/DeleteConfirmationDialog';
+import ConfirmationDialog from '../../components/Dialogs/ConfirmationDialog';
 
 function DeleteBudgetConfirmation(props) {
   return (
-    <DeleteConfirmationDialog
+    <ConfirmationDialog
       variant="danger"
       title={`Are you sure you want to delete budget ${props.budgetName}?`}
       description="All transactions and expense items will be deleted!"

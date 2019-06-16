@@ -10,7 +10,7 @@ import Dashboard from './containers/Dashboard/Dashboard';
 import Budgets from './containers/Budgets/Budgets';
 import BudgetPage from './containers/Budgets/BudgetPage';
 import ExpenseItemPage from './containers/ExpenseItems/ExpenseItemPage';
-import ErrorSnackbar from './components/Snackbars/ErrorSnackbar';
+import StatusSnackbar from './components/Snackbars/StatusSnackbar';
 
 const styles = theme => ({
   root: {
@@ -45,7 +45,8 @@ class App extends React.Component {
           </main>
         </BrowserRouter>
 
-        <ErrorSnackbar message={this.props.errorMessage} open={this.props.showError} handleClose={this.props.hideError} />
+        <StatusSnackbar variant="error" message={this.props.errorMessage} open={this.props.showError} handleClose={this.props.hideError} />
+        <StatusSnackbar variant="success" message={this.props.successMessage} open={this.props.showSuccess} handleClose={this.props.hideSuccess} />
       </div>
     );
   }
@@ -57,10 +58,13 @@ App.propTypes = {
 
 const mapStateToProps = state => ({
   errorMessage: state.errorMessage,
-  showError: state.showError
+  showError: state.showError,
+  successMessage: state.successMessage,
+  showSuccess: state.showSuccess
 });
 const mapDispatchToProps = dispatch => ({
-  hideError: () => dispatch({ type: 'HIDE_ERROR' })
+  hideError: () => dispatch({ type: 'HIDE_ERROR' }),
+  hideSuccess: () => dispatch({ type: 'HIDE_SUCCESS' })
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRoot(withStyles(styles)(App)));

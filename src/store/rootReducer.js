@@ -6,7 +6,9 @@ const init = {
     id: '2fa434ad-5611-4e1e-8aa4-61616577bc72'
   },
   errorMessage: '',
-  showError: false
+  showError: false,
+  successMessage: '',
+  showSuccess: false
 };
 
 export default (state = init, action) => {
@@ -42,11 +44,24 @@ export default (state = init, action) => {
         return state;
       }
 
+      const restItems = state.currentBudget.expenseItems || [];
       return {
         ...state,
         currentBudget: {
           ...state.currentBudget,
-          expenseItems: [ action.payload.expenseItem, ...state.currentBudget.expenseItems ]
+          expenseItems: [ action.payload.expenseItem, ...restItems ]
+        }
+      };
+    case 'DELETE_EXPENSE_ITEM':
+      if (!state.currentBudget) {
+        return state;
+      }
+
+      return {
+        ...state,
+        currentBudget: {
+          ...state.currentBudget,
+          expenseItems: state.currentBudget.expenseItems.filter(i => i.id !== action.payload.expenseItemId)
         }
       };
     case 'SHOW_ERROR':
@@ -59,6 +74,17 @@ export default (state = init, action) => {
       return {
         ...state,
         showError: false
+      };
+    case 'SHOW_SUCCESS':
+      return {
+        ...state,
+        showSuccess: true,
+        successMessage: action.payload.message
+      };
+    case 'HIDE_SUCCESS':
+      return {
+        ...state,
+        showSuccess: false
       };
     default:
       return state;

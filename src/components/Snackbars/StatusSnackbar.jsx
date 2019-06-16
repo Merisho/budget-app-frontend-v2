@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import ErrorIcon from '@material-ui/icons/Error';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { withStyles } from '@material-ui/core/styles';
+import { green } from '@material-ui/core/colors';
 import clsx from 'clsx';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,6 +13,9 @@ import IconButton from '@material-ui/core/IconButton';
 const styles = theme => ({
   error: {
     backgroundColor: theme.palette.error.dark,
+  },
+  success: {
+    backgroundColor: green[600]
   },
   icon: {
     fontSize: 20,
@@ -25,8 +30,15 @@ const styles = theme => ({
   },
 });
 
-function ErrorSnackbar(props) {
+function StatusSnackbar(props) {
   const { classes } = props;
+
+  let Icon = CheckCircleIcon;
+  let contentClass = classes.success;
+  if (props.variant === 'error') {
+    Icon = ErrorIcon;
+    contentClass = classes.error;
+  }
 
   return (
     <Snackbar
@@ -40,10 +52,10 @@ function ErrorSnackbar(props) {
     >
       <SnackbarContent
         aria-describedby="client-snackbar"
-        className={classes.error}
+        className={contentClass}
         message={
           <span id="client-snackbar" className={classes.message}>
-            <ErrorIcon className={clsx(classes.icon, classes.iconVariant)} />
+            <Icon className={clsx(classes.icon, classes.iconVariant)} />
             {props.message}
           </span>
         }
@@ -57,10 +69,11 @@ function ErrorSnackbar(props) {
   );
 }
 
-ErrorSnackbar.propTypes = {
+StatusSnackbar.propTypes = {
+  variant: PropTypes.string.isRequired,
   message: PropTypes.string.isRequired,
   open: PropTypes.bool,
   handleClose: PropTypes.func.isRequired
 };
 
-export default withStyles(styles)(ErrorSnackbar);
+export default withStyles(styles)(StatusSnackbar);
