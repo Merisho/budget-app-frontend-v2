@@ -18,7 +18,7 @@ const styles = theme => {
 
   const tileHeightTransitionParams = {
     easing: theme.transitions.easing.easeInOut,
-    duration: theme.transitions.duration.shorter
+    duration: theme.transitions.duration.standard
   };
   const actionButtonsTransition = theme.transitions.create('background', {
     easing: theme.transitions.easing.easeInOut,
