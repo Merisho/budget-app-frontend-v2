@@ -69,6 +69,11 @@ class Budgets extends Component {
     this.props.showSuccess(`Budget "${budget.name}" has been deleted`);
   }
 
+  budgetEdited = budget => {
+    this.props.editBudget(budget.id, budget);
+    this.props.showSuccess(`Budget "${budget.name}" has been edited`);
+  }
+
   budgetTileError = errMessage => {
     this.props.showError(errMessage);
   }
@@ -96,11 +101,11 @@ class Budgets extends Component {
           </div>
           <Typography variant="h2">Active</Typography>
           {this.state.displayedBudgets.filter(this.isCurrentBudget).map(budget => {
-            return <BudgetTile budget={budget} key={budget.id} deleted={this.budgetDeleted} onError={this.budgetTileError} />
+            return <BudgetTile budget={budget} key={budget.id} deleted={this.budgetDeleted} edited={this.budgetEdited} onError={this.budgetTileError} />
           })}
           <Typography variant="h2">Inactive</Typography>
           {this.state.displayedBudgets.filter(this.isNotCurrentBudget).map(budget => {
-            return <BudgetTile budget={budget} key={budget.id} deleted={this.budgetDeleted} onError={this.budgetTileError} />
+            return <BudgetTile budget={budget} key={budget.id} deleted={this.budgetDeleted} edited={this.budgetEdited} onError={this.budgetTileError} />
           })}
         </Loading>
       </div>
@@ -115,6 +120,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   setAllBudgets: budgets => dispatch({ type: 'SET_ALL_BUDGETS', payload: { budgets } }),
   createBudget: budget => dispatch({ type: 'CREATE_BUDGET', payload: { budget } }),
+  editBudget: (budgetId, budget) => dispatch({ type: 'EDIT_BUDGET', payload: { budgetId, budget } }),
   deleteBudget: budgetId => dispatch({ type: 'DELETE_BUDGET', payload: { budgetId } }),
   showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } }),
   showSuccess: message => dispatch({ type: 'SHOW_SUCCESS', payload: { message } })

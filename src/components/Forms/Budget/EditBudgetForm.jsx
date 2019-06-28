@@ -9,6 +9,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import PropTypes from 'prop-types';
 
 import MoneyField from '../../Money/MoneyField';
 
@@ -74,7 +75,7 @@ function EditBudgetForm(props) {
   const [ state, dispatch ] = React.useReducer(reducer, {
     name: props.budget.name,
     total: props.budget.total,
-    description: props.budget.description,
+    description: props.budget.description || '',
     startDate: props.budget.startDate,
     endDate: props.budget.endDate,
     invalidName: false,
@@ -163,7 +164,7 @@ function EditBudgetForm(props) {
       return;
     }
 
-    props.handleCreate && props.handleEdit({
+    props.handleEdit({
       name: state.name,
       total: state.total,
       description: state.description,
@@ -244,5 +245,12 @@ function EditBudgetForm(props) {
     </Dialog>
   );
 }
+
+EditBudgetForm.propTypes = {
+  handleClose: PropTypes.func.isRequired,
+  handleEdit: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  budget: PropTypes.object.isRequired
+};
 
 export default withStyles(styles)(EditBudgetForm);

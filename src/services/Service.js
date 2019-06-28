@@ -36,6 +36,7 @@ export default class BudgetService {
         user(id: "${userId}") {
           budgets {
             id
+            description
             name
             total
             allowed
@@ -130,6 +131,33 @@ export default class BudgetService {
     `);
 
     return res.addBudget;
+  }
+
+  static async updateBudget(budgetId, data) {
+    const params = [
+      `id: "${budgetId}"`,
+      `name: "${data.name}"`,
+      `total: ${data.total}`,
+      `startDate: "${data.startDate.toISOString()}"`,
+      `endDate: "${data.endDate.toISOString()}"`,
+      `description: "${data.description}"`
+    ];
+
+    const res = await this._postRequest(`
+      mutation {
+        updateBudget(${params.join(',')}) {
+          id
+          name
+          startDate
+          endDate
+          description
+          total
+          allowed
+        }
+      }
+    `);
+
+    return res.updateBudget;
   }
 
   static async deleteBudget(budgetId) {

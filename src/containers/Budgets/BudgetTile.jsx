@@ -11,6 +11,7 @@ import Money from '../../components/Money/Money';
 import DeleteBudgetConfirmation from './DeleteBudgetConfirmation';
 import utils from './utils';
 import Service from '../../services/Service';
+import EditBudgetForm from '../../components/Forms/Budget/EditBudgetForm';
 
 const styles = theme => {
   const nameColor = theme.palette.primary.dark;
@@ -56,7 +57,7 @@ const styles = theme => {
       },
       transition: theme.transitions.create('height', {
         ...tileHeightTransitionParams,
-        delay: 1000
+        delay: 700
       })
     },
     nameLink: {
@@ -95,29 +96,29 @@ const styles = theme => {
 
 function budgetTile(props) {
   const [ confirmDeletion, setConfirmDeletion ] = React.useState(false);
-  const {budget} = props;
-  const {classes} = props;
+  const [ openEditForm, setOpenEditForm ] = React.useState(false)
+  const { budget, classes } = props;
   const startDate = utils.formatDate(budget.startDate);
   const endDate = utils.formatDate(budget.endDate);
 
-  function deleteBudget(e) {
-    e.preventDefault();
-    setConfirmDeletion(true);
-  }
-
-  function cancelDeletion(e) {
-    e.preventDefault();
-    setConfirmDeletion(false);
-  }
-
-  async function acceptDeletion(e) {
-    e.preventDefault();
+  async function acceptDeletion() {
     try {
       await Service.deleteBudget(budget.id);
       setConfirmDeletion(false);
       props.deleted && props.deleted(budget);
     } catch(err) {
-      props.onError && props.onError('An error occured. Please try again');
+      props.onError && props.onError('Could not delete budget :( Please try again');
+      console.error(err);
+    }
+  }
+
+  async function applyEditedBudget(data) {
+    try {
+      const editedBudget = await Service.updateBudget(budget.id, data);
+      setOpenEditForm(false);
+      props.edited && props.edited(editedBudget);
+    } catch(err) {
+      props.onError && props.onError('Could not edit budget :( Please try again');
       console.error(err);
     }
   }
@@ -157,15 +158,16 @@ function budgetTile(props) {
               </div>
             </div>
           </CardContent>
-          <div className={classes.delete} onClick={deleteBudget}>
+          <div className={classes.delete} onClick={() => setConfirmDeletion(true)}>
             <DeleteForeverIcon />
           </div>
-          <div className={classes.edit}>
+          <div className={classes.edit} onClick={() => setOpenEditForm(true)}>
             <EditIcon />
           </div>
         </Card>
       </div>
-      <DeleteBudgetConfirmation open={confirmDeletion} handleCancel={cancelDeletion} handleOK={acceptDeletion} budgetName={budget.name} />
+      <DeleteBudgetConfirmation open={confirmDeletion} handleCancel={() => setConfirmDeletion(false)} handleOK={acceptDeletion} budgetName={budget.name} />
+      <EditBudgetForm budget={budget} open={openEditForm} handleClose={() => setOpenEditForm(false)} handleEdit={applyEditedBudget} />
     </React.Fragment>
   );
 }

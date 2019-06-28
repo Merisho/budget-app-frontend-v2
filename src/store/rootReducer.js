@@ -28,6 +28,21 @@ export default (state = init, action) => {
         ...state,
         allBudgets: [ action.payload.budget, ...state.allBudgets ]
       };
+    case 'EDIT_BUDGET':
+      const index = state.allBudgets.findIndex(b => b.id === action.payload.budgetId);
+      if (index === -1) {
+        return state;
+      }
+
+      const editedBudget = {
+        ...state.allBudgets[index],
+        ...action.payload.budget
+      };
+
+      return {
+        ...state,
+        allBudgets: [ ...state.allBudgets.slice(0, index), editedBudget, ...state.allBudgets.slice(index + 1) ]
+      };
     case 'DELETE_BUDGET':
       const allBudgets = state.allBudgets.filter(b => b.id !== action.payload.budgetId);
       return {
