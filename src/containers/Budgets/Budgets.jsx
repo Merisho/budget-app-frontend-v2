@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
 import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
@@ -13,9 +12,6 @@ import CreateBudget from '../../components/Actions/CreateBudget/CreateBudget';
 const styles = theme => ({
   actionBar: {
     marginBottom: '32px'
-  },
-  budgetLink: {
-    overflow: 'hidden'
   },
   search: {
     margin: '0 32px 0 0'
@@ -68,14 +64,6 @@ class Budgets extends Component {
     this.props.showSuccess(`Budget "${budget.name}" has been created`);
   }
 
-  budgetLinkTile = budget => {
-    return (
-      <Link to={`/budgets/${budget.id}`} key={budget.id} className={this.props.classes.budgetLink}>
-        <BudgetTile budget={budget} deleted={this.budgetDeleted} onError={this.budgetTileError} />
-      </Link>
-    );
-  }
-
   budgetDeleted = budget => {
     this.props.deleteBudget(budget.id);
     this.props.showSuccess(`Budget "${budget.name}" has been deleted`);
@@ -107,9 +95,13 @@ class Budgets extends Component {
             <CreateBudget user={this.props.user} created={this.handleBudgetCreated} />
           </div>
           <Typography variant="h2">Active</Typography>
-          {this.state.displayedBudgets.filter(this.isCurrentBudget).map(this.budgetLinkTile)}
+          {this.state.displayedBudgets.filter(this.isCurrentBudget).map(budget => {
+            return <BudgetTile budget={budget} key={budget.id} deleted={this.budgetDeleted} onError={this.budgetTileError} />
+          })}
           <Typography variant="h2">Inactive</Typography>
-          {this.state.displayedBudgets.filter(this.isNotCurrentBudget).map(this.budgetLinkTile)}
+          {this.state.displayedBudgets.filter(this.isNotCurrentBudget).map(budget => {
+            return <BudgetTile budget={budget} key={budget.id} deleted={this.budgetDeleted} onError={this.budgetTileError} />
+          })}
         </Loading>
       </div>
     );

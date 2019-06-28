@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
+import PropTypes from 'prop-types'
 
 import CreateBudgetForm from '../../Forms/Budget/CreateBudgetForm';
 import Service from '../../../services/Service';
@@ -26,7 +27,7 @@ function CreateBudget(props) {
     });
 
     close();
-    props.created && props.created(budget);
+    props.created(budget);
   }
   
   return (
@@ -35,6 +36,10 @@ function CreateBudget(props) {
       <CreateBudgetForm open={formOpen} handleClose={close} handleCreate={create} />
     </React.Fragment>
   );
+}
+
+CreateBudget.propTypes = {
+  created: PropTypes.func.isRequired
 }
 
 export default CreateBudget;

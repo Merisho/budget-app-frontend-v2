@@ -4,6 +4,7 @@ import lightblue from '@material-ui/core/colors/lightBlue';
 import green from '@material-ui/core/colors/green';
 import grey from '@material-ui/core/colors/grey';
 import red from '@material-ui/core/colors/red';
+import amber from '@material-ui/core/colors/amber';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 // A theme with custom primary and secondary color.
@@ -15,7 +16,10 @@ const theme = createMuiTheme({
     },
     action: {
       approve: green[500],
-      delete: red[500]
+      delete: red[700],
+      highlightedDelete: red[500],
+      edit: amber[600],
+      highlightedEdit: amber[400]
     },
     background: {
       active: green[100]
