@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 
-import CreateExpenseItemForm from '../../Forms/CreateExpenseItem/CreateExpenseItemForm';
+import CreateExpenseItemForm from '../../Forms/ExpenseItem/CreateExpenseItemForm';
 import Service from '../../../services/Service';
 
 function CreateExpenseItem(props) {

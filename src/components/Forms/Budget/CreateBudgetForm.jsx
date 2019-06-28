@@ -70,7 +70,7 @@ function reducer(state, action) {
   }
 }
 
-function CreateExpenseItemForm(props) {
+function CreateBudgetForm(props) {
   const [ state, dispatch ] = React.useReducer(reducer, {
     name: '',
     total: 1000,
@@ -245,4 +245,4 @@ function CreateExpenseItemForm(props) {
   );
 }
 
-export default withStyles(styles)(CreateExpenseItemForm);
+export default withStyles(styles)(CreateBudgetForm);

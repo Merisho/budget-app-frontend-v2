@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 
-import CreateBudgetForm from '../../Forms/CreateBudget/CreateBudgetForm';
+import CreateBudgetForm from '../../Forms/Budget/CreateBudgetForm';
 import Service from '../../../services/Service';
 
 function CreateBudget(props) {
