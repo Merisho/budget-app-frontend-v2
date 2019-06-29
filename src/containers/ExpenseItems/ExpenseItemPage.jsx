@@ -41,15 +41,38 @@ const styles = {
 };
 
 class ExpenseItemPage extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: true
+    };
+
+    this.expenseItemId = this.props.match.params.id;
+  }
   componentDidMount() {
-    this.loadExpenseItem(this.props.match.params.id);
+    if (!this.props.expenseItem || this.props.expenseItem.id !== this.expenseItemId) {
+      this.loadExpenseItem(this.expenseItemId);
+    } else {
+      this.loaded();
+    }
   }
 
   async loadExpenseItem(id) {
-    if (!this.props.expenseItem || this.props.expenseItem.id !== id) {
-      const expenseItem = await Service.fetchExpenseItem(id);
-      this.props.setExpenseItem(expenseItem);
-    }
+    this.loading();
+
+    const expenseItem = await Service.fetchExpenseItem(id);
+    this.props.setExpenseItem(expenseItem);
+
+    this.loaded();
+  }
+
+  loading() {
+    this.setState({ loading: true });
+  }
+
+  loaded() {
+    this.setState({ loading: false });
   }
 
   render() {
@@ -99,7 +122,7 @@ class ExpenseItemPage extends Component {
     }
 
     return (
-      <Loading inProgress={!this.props.expenseItem}>
+      <Loading inProgress={this.state.loading}>
         {expenseItemView}
       </Loading>
     );
