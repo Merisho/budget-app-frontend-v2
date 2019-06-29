@@ -55,7 +55,7 @@ export default (state = init, action) => {
         currentExpenseItem: action.payload.expenseItem
       };
     case 'CREATE_EXPENSE_ITEM':
-      if (!state.currentBudget || !action.payload.expenseItem) {
+      if (!state.currentBudget) {
         return state;
       }
 
@@ -65,6 +65,23 @@ export default (state = init, action) => {
         currentBudget: {
           ...state.currentBudget,
           expenseItems: [ action.payload.expenseItem, ...restItems ]
+        }
+      };
+    case 'EDIT_EXPENSE_ITEM':
+      if (!state.currentBudget) {
+        return state;
+      }
+
+      const expenseItemIndex = state.currentBudget.expenseItems.findIndex(ei => ei.id === action.payload.expenseItemId);
+      return {
+        ...state,
+        currentBudget: {
+          ...state.currentBudget,
+          expenseItems: [
+            ...state.currentBudget.expenseItems.slice(0, expenseItemIndex),
+            action.payload.expenseItem,
+            ...state.currentBudget.expenseItems.slice(expenseItemIndex + 1)
+          ]
         }
       };
     case 'DELETE_EXPENSE_ITEM':

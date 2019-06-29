@@ -73,7 +73,11 @@ export default class BudgetService {
   }
 
   static async createExpenseItem(budgetId, data) {
-    const params = [`budgetID: "${budgetId}"`, `name: "${data.name}"`, `total: ${data.total}`];
+    const params = [
+      `budgetID: "${budgetId}"`,
+      `name: "${data.name}"`,
+      `total: ${data.total}`
+    ];
     if (data.description) {
       params.push(`description: "${data.description}"`);
     }
@@ -95,6 +99,37 @@ export default class BudgetService {
     `);
 
     return res.addExpenseItem;
+  }
+  
+  static async updateExpenseItem(expenseItemId, data) {
+    const params = [
+      `id: "${expenseItemId}"`,
+      `name: "${data.name}"`,
+      `total: ${data.total}`,
+      `description: "${data.description}"`
+    ];
+
+    const res  = await this._postRequest(`
+      mutation {
+        updateExpenseItem(${params.join(',')}) {
+          id
+          name
+          budgetID
+          description
+          total
+          transactionsTotal
+          transactions {
+            id
+            name
+            total
+            description
+            creationDate
+          }
+        }
+      }
+    `);
+
+    return res.updateExpenseItem;
   }
 
   static async createBudget(data) {

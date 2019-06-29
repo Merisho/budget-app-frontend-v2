@@ -6,14 +6,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import DeleteForever from '@material-ui/icons/DeleteForever';
 import { withStyles } from '@material-ui/core/styles';
-import Checkbox from '@material-ui/core/Checkbox';
-import { Link, withRouter } from 'react-router-dom';
 
-import Money from '../../../components/Money/Money';
-import DeleteExpenseItemConfirmation from './DeleteExpenseItemConfirmation';
 import Service from '../../../services/Service';
+import ExpenseItemTableRow from './ExpenseItemTableRow';
 
 const styles = theme => ({
   root: {
@@ -43,10 +39,6 @@ const styles = theme => ({
   descriptionCell: {
     width: '35%'
   },
-  deleteItem: {
-    color: theme.palette.action.delete,
-    cursor: 'pointer'
-  },
   addItem: {
     background: theme.palette.secondary.main,
     color: theme.palette.secondaryText.white
@@ -62,61 +54,25 @@ class ExpenseItems extends Component {
     super(props);
 
     this.state = {
-      selectedItems: {},
       confirmDeletion: false,
       expenseItemToDelete: null
     };
   }
 
-  setSelectStateForAll(selected) {
-    const selectedItems = {};
-
-    if (selected) {
-      this.props.items.forEach(i => {
-        selectedItems[i.id] = true;
-      });
-    }
-
-    this.setState({selectedItems});
-  }
-
-  setSelectState(id, selected) {
-    const selectedItems = {...this.state.selectedItems};
-    if (selected) {
-      selectedItems[id] = selected;
-    } else {
-      delete selectedItems[id];
-    }
-
-    this.setState({selectedItems});
-  }
-
-  handleDelete = expenseItem => {
-    this.setState({
-      confirmDeletion: true,
-      expenseItemToDelete: expenseItem
-    });
-  }
-
-  cancelDeletion = () => {
-    this.setState({
-      confirmDeletion: false,
-      expenseItemToDelete: null
-    });
-  }
-
-  acceptDeletion = async () => {
-    if (!this.state.expenseItemToDelete) {
-      return;
-    }
-
+  acceptDeletion = async expenseItem => {
     try {
-      await Service.deleteExpenseItem(this.state.expenseItemToDelete.id);
-      this.props.expenseItemDeleted && this.props.expenseItemDeleted(this.state.expenseItemToDelete);
-      this.setState({
-        confirmDeletion: false,
-        expenseItemToDelete: null
-      });
+      await Service.deleteExpenseItem(expenseItem.id);
+      this.props.expenseItemDeleted && this.props.expenseItemDeleted(expenseItem);
+    } catch(err) {
+      console.error(err);
+      this.props.onError('An error occured. Please try again');
+    }
+  }
+
+  handleEdit = async (id, data) => {
+    try {
+      const editedExpenseItem = await Service.updateExpenseItem(id, data);
+      this.props.expenseItemEdited && this.props.expenseItemEdited(editedExpenseItem);
     } catch(err) {
       console.error(err);
       this.props.onError('An error occured. Please try again');
@@ -131,9 +87,6 @@ class ExpenseItems extends Component {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell className={classes.checkCell}>
-                <Checkbox onChange={(event, checked) => this.setSelectStateForAll(checked)} />
-              </TableCell>
               <TableCell className={classes.nameCell}>Name</TableCell>
               <TableCell className={classes.totalCell}>Total</TableCell>
               <TableCell className={classes.spentCell}>Spent</TableCell>
@@ -144,39 +97,14 @@ class ExpenseItems extends Component {
           </TableHead>
           <TableBody>
             {this.props.items && this.props.items.length ? this.props.items.map(expenseItem => (
-              <TableRow key={expenseItem.id}>
-                <TableCell>
-                  <Checkbox checked={!!this.state.selectedItems[expenseItem.id]}
-                    onChange={(event, checked) => this.setSelectState(expenseItem.id, checked)} />
-                </TableCell>
-                <TableCell>
-                  <Link to={'/budgets/expenseitem/' + expenseItem.id}>
-                    {expenseItem.name}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <Money value={expenseItem.total} />
-                </TableCell>
-                <TableCell>
-                  <Money value={expenseItem.transactionsTotal} />
-                </TableCell>
-                <TableCell>
-                  <Money value={expenseItem.total - expenseItem.transactionsTotal} highlight />
-                </TableCell>
-                <TableCell>{expenseItem.description}</TableCell>
-                <TableCell>
-                  <DeleteForever onClick={() => this.handleDelete(expenseItem)} className={classes.deleteItem} />
-                </TableCell>
-              </TableRow>
+              <ExpenseItemTableRow
+                key={expenseItem.id}
+                expenseItem={expenseItem}
+                onDelete={this.acceptDeletion}
+                onEdit={editedItem => this.handleEdit(expenseItem.id, editedItem)} />
             )) : null}
           </TableBody>
         </Table>
-        <DeleteExpenseItemConfirmation
-          open={this.state.confirmDeletion}
-          handleCancel={this.cancelDeletion}
-          handleOK={this.acceptDeletion}
-          expenseItemName={this.state.expenseItemToDelete ? this.state.expenseItemToDelete.name : ''}
-        />
       </Paper>
     );
   }
@@ -187,4 +115,4 @@ ExpenseItems.propTypes = {
   expenseItemDeleted: PropTypes.func
 };
 
-export default withRouter(withStyles(styles)(ExpenseItems));
+export default withStyles(styles)(ExpenseItems);
