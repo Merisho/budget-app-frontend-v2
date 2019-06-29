@@ -19,7 +19,7 @@ function CreateExpenseItem(props) {
     close();
     const item = await Service.createExpenseItem(props.budgetId, {
       name: data.name,
-      total: +data.total * 100,
+      total: +data.total,
       description: data.descr
     });
 

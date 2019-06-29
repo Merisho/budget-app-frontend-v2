@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
 function MoneyField(props) {
-  const [ value, setValue ] = React.useState(props.defaultValue || 0);
+  const [ value, setValue ] = React.useState(formatDigits(props.defaultValue  || 0));
 
   function change(e) {
     const total = prepareTotal(e.target.value);

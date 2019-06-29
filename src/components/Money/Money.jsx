@@ -19,7 +19,7 @@ function money(props) {
     className = value > 0 ? classes.positive : classes.negative;
   }
 
-  const preparedValue = `₴${formatDigits(Math.round(+value) / 100)}`;
+  const preparedValue = `₴${formatDigits(Math.round(+value))}`;
 
   return (
     <span className={className}>

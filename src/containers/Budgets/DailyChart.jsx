@@ -47,7 +47,7 @@ function groupTotalsByDate(transactions) {
 
   transactions.forEach(t => {
     const date = utils.formatDate(t.creationDate);
-    const total = t.total / 100;
+    const total = t.total;
     if (groups[date]) {
       groups[date].Total += total;
     } else {

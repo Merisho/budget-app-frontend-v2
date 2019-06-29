@@ -20,7 +20,7 @@ function CreateBudget(props) {
     const budget = await Service.createBudget({
       userId: props.user.id,
       name: data.name,
-      total: +data.total * 100,
+      total: +data.total,
       description: data.description,
       startDate: data.startDate,
       endDate: data.endDate
