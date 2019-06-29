@@ -12,7 +12,7 @@ import MoneyField from '../../Money/MoneyField';
 function CreateExpenseItemForm(props) {
   const [total, setTotal] = React.useState(props.expenseItem.total);
   const [name, setName] = React.useState(props.expenseItem.name);
-  const [description, setDescription] = React.useState(props.expenseItem.description);
+  const [description, setDescription] = React.useState(props.expenseItem.description || '');
   const [nameInvalid, setNameInvalid] = React.useState(false);
   const [totalInvalid, setTotalInvalid] = React.useState(false);
 

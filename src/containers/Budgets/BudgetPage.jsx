@@ -50,19 +50,31 @@ class BudgetPage extends Component {
   }
 
   componentDidMount() {
-    this.loadBudget(this.budgetId);
+    if (!this.props.budget || this.props.budget.id !== this.budgetId) {
+      this.loadBudget(this.budgetId);
+    } else {
+      this.loaded();
+    }
   }
 
   async loadBudget(budgetId) {
-    if (!this.props.budget || this.props.budget.id !== budgetId) {
-      const budget = await Service.fetchBudget(budgetId);
-      this.setState({
-        displayedExpenseItems: budget.expenseItems
-      });
+    this.loading();
 
-      this.props.setBudget(budget);
-    }
+    const budget = await Service.fetchBudget(budgetId);
+    this.setState({
+      displayedExpenseItems: budget.expenseItems
+    });
 
+    this.props.setBudget(budget);
+
+    this.loaded();
+  }
+
+  loading() {
+    this.setState({ loading: true });
+  }
+
+  loaded() {
     this.setState({ loading: false });
   }
 
@@ -74,18 +86,18 @@ class BudgetPage extends Component {
   }
 
   expenseItemCreated = expenseItem => {
-    this.props.createExpenseItem(expenseItem);
     this.props.showSuccess(`Expense item "${expenseItem.name}" has been created`);
+    this.loadBudget(this.budgetId);
   }
 
   expenseItemDeleted = expenseItem => {
-    this.props.deleteExpenseItem(expenseItem.id);
     this.props.showSuccess(`Expense item "${expenseItem.name}" has been deleted`);
+    this.loadBudget(this.budgetId);
   }
 
   expenseItemEdited = expenseItem => {
-    this.props.editExpenseItem(expenseItem.id, expenseItem);
     this.props.showSuccess(`Expense item "${expenseItem.name}" has been edited`);
+    this.loadBudget(this.budgetId);
   }
 
   handleError = errMessage => {
