@@ -63,7 +63,7 @@ function ExpenseItemTableRow(props) {
       <DeleteExpenseItemConfirmation
         open={confirmDeletion}
         handleCancel={() => setConfirmDeletion(false)}
-        handleOK={handleDelete}
+        handleOK={() => handleDelete(props.expenseItem)}
         expenseItemName={props.expenseItem.name}
       />
       <EditExpenseItemForm expenseItem={expenseItem} open={openEditForm} onEdit={handleEdit} onDiscard={() => setOpenEditForm(false)} />

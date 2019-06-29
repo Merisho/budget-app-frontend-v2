@@ -112,7 +112,8 @@ class ExpenseItems extends Component {
 
 ExpenseItems.propTypes = {
   onError: PropTypes.func.isRequired,
-  expenseItemDeleted: PropTypes.func
+  expenseItemDeleted: PropTypes.func,
+  expenseItemEdited: PropTypes.func
 };
 
 export default withStyles(styles)(ExpenseItems);
