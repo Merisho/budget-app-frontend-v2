@@ -33,11 +33,8 @@ const styles = theme => ({
   actionsCell: {
     width: '10%'
   },
-  checkCell: {
-    width: '5%'
-  },
   descriptionCell: {
-    width: '35%'
+    width: '40%'
   },
   addItem: {
     background: theme.palette.secondary.main,
@@ -111,6 +108,7 @@ class ExpenseItems extends Component {
 }
 
 ExpenseItems.propTypes = {
+  items: PropTypes.array.isRequired,
   onError: PropTypes.func.isRequired,
   expenseItemDeleted: PropTypes.func,
   expenseItemEdited: PropTypes.func

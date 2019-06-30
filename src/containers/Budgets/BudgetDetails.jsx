@@ -9,8 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import red from '@material-ui/core/colors/red';
 import Money from '../../components/Money/Money';
-
-import utils from './utils';
+import DateValue from '../../components/Values/Date';
 
 const styles = {
   budgetDetails: {
@@ -65,10 +64,10 @@ function budgetDetails(props) {
               <Money value={budget.allowed} highlight />
             </TableCell>
             <TableCell>
-              {utils.formatDate(budget.startDate)}
+              <DateValue>{budget.startDate}</DateValue>
             </TableCell>
             <TableCell>
-              {utils.formatDate(budget.endDate)}
+              <DateValue>{budget.endDate}</DateValue>
             </TableCell>
           </TableRow>
         </TableBody>

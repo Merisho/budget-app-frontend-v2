@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import Loading from '../../components/Loading/Loading';
 import BackButton from '../../components/Buttons/Back';
-import ExpenseItems from './ExpenseItems/ExpenseItems';
+import ExpenseItemsTable from './ExpenseItems/ExpenseItemsTable';
 import BudgetDetails from './BudgetDetails';
 import Service from '../../services/Service';
 import DailyChart from './DailyChart';
@@ -128,7 +128,7 @@ class BudgetPage extends Component {
             <Input type="text" placeholder="Search" className={classes.expenseItemsSeacrh} onChange={event => this.searchExpenseItems(event.target.value)} />
             <CreateExpenseItem budgetId={this.budgetId} created={this.expenseItemCreated} />
           </div>
-          <ExpenseItems
+          <ExpenseItemsTable
             items={this.state.displayedExpenseItems}
             expenseItemDeleted={this.expenseItemDeleted}
             expenseItemEdited={this.expenseItemEdited}

@@ -8,8 +8,6 @@ import CartesianGrid from 'recharts/lib/cartesian/CartesianGrid';
 import Tooltip from 'recharts/lib/component/Tooltip';
 import Legend from 'recharts/lib/component/Legend';
 
-import utils from './utils';
-
 function simpleLineChart(props) {
   const { budget } = props;
 
@@ -46,8 +44,8 @@ function groupTotalsByDate(transactions) {
   const groups = {};
 
   transactions.forEach(t => {
-    const date = utils.formatDate(t.creationDate);
-    const total = t.total;
+    const date = formatDate(t.creationDate);
+    const total = +t.total;
     if (groups[date]) {
       groups[date].Total += total;
     } else {
@@ -56,6 +54,19 @@ function groupTotalsByDate(transactions) {
   });
 
   return Object.values(groups);
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+
+  return `${zeroPrefix(day)}.${zeroPrefix(month)}.${year}`;
+}
+
+function zeroPrefix(val) {
+  return val < 10 ? `0${val}` : val;
 }
 
 export default simpleLineChart;

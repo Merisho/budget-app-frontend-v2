@@ -1,44 +1,12 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import DeleteForever from '@material-ui/icons/DeleteForever';
 import { connect } from 'react-redux';
 
 import Service from '../../services/Service';
 import Loading from '../../components/Loading/Loading';
-import Money from '../../components/Money/Money';
 import BackButton from '../../components/Buttons/Back';
-
-const styles = {
-  root: {
-    width: '100%'
-  },
-  table: {
-    minWidth: 700,
-  },
-  nameCell: {
-    width: '20%'
-  },
-  totalCell: {
-    width: '10%'
-  },
-  dateCell: {
-    width: '25%'
-  },
-  descriptionCell: {
-    width: '35%'
-  },
-  actionsCell: {
-    width: '10%'
-  }
-};
+import CreateTransaction from '../../components/Actions/Transaction/CreateTransaction';
+import TransactionsTable from './Transactions/TransactionsTable';
 
 class ExpenseItemPage extends Component {
   constructor(props) {
@@ -50,6 +18,7 @@ class ExpenseItemPage extends Component {
 
     this.expenseItemId = this.props.match.params.id;
   }
+
   componentDidMount() {
     if (!this.props.expenseItem || this.props.expenseItem.id !== this.expenseItemId) {
       this.loadExpenseItem(this.expenseItemId);
@@ -67,6 +36,10 @@ class ExpenseItemPage extends Component {
     this.loaded();
   }
 
+  handleTransactionCreate() {
+    this.loadExpenseItem(this.expenseItemId);
+  }
+
   loading() {
     this.setState({ loading: true });
   }
@@ -76,8 +49,6 @@ class ExpenseItemPage extends Component {
   }
 
   render() {
-    const { classes } = this.props;
-
     let expenseItemView = null;
     if (this.props.expenseItem) {
       expenseItemView = (
@@ -88,35 +59,10 @@ class ExpenseItemPage extends Component {
           <Typography color="textSecondary">
             {this.props.expenseItem.description}
           </Typography>
+
+          <CreateTransaction expenseItem={this.props.expenseItem} onCreate={() => this.handleTransactionCreate()} />
           
-          <Paper className={classes.root}>
-            <Table className={classes.table}>
-              <TableHead>
-                <TableRow>
-                  <TableCell className={classes.nameCell}>Name</TableCell>
-                  <TableCell className={classes.totalCell}>Total</TableCell>
-                  <TableCell className={classes.dateCell}>Date</TableCell>
-                  <TableCell className={classes.descriptionCell}>Description</TableCell>
-                  <TableCell className={classes.actionsCell}>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {this.props.expenseItem.transactions && this.props.expenseItem.transactions.map(transaction => (
-                  <TableRow key={transaction.id}>
-                    <TableCell>{transaction.name}</TableCell>
-                    <TableCell>
-                      <Money value={transaction.total} />
-                    </TableCell>
-                    <TableCell>{transaction.creationDate}</TableCell>
-                    <TableCell>{transaction.description}</TableCell>
-                    <TableCell>
-                      <DeleteForever color="error" />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
+          <TransactionsTable transactions={this.props.expenseItem.transactions} />
         </div>
       );
     }
@@ -136,4 +82,4 @@ const mapDispatchToProps = dispatch => ({
   setExpenseItem: expenseItem => dispatch({ type: 'SET_CURRENT_EXPENSE_ITEM', payload: { expenseItem } })
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(ExpenseItemPage)));
+export default connect(mapStateToProps, mapDispatchToProps)(ExpenseItemPage);

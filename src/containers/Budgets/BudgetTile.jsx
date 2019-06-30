@@ -9,9 +9,9 @@ import { Link } from 'react-router-dom';
 
 import Money from '../../components/Money/Money';
 import DeleteBudgetConfirmation from './DeleteBudgetConfirmation';
-import utils from './utils';
 import Service from '../../services/Service';
 import EditBudgetForm from '../../components/Forms/Budget/EditBudgetForm';
+import DateValue from '../../components/Values/Date';
 
 const styles = theme => {
   const nameColor = theme.palette.primary.dark;
@@ -98,8 +98,6 @@ function budgetTile(props) {
   const [ confirmDeletion, setConfirmDeletion ] = React.useState(false);
   const [ openEditForm, setOpenEditForm ] = React.useState(false)
   const { budget, classes } = props;
-  const startDate = utils.formatDate(budget.startDate);
-  const endDate = utils.formatDate(budget.endDate);
 
   async function acceptDeletion() {
     try {
@@ -137,7 +135,7 @@ function budgetTile(props) {
               Period
             </Typography>
             <Typography>
-              {startDate} - {endDate}
+              <DateValue>{budget.startDate}</DateValue> - <DateValue>{budget.endDate}</DateValue>
             </Typography>
             <div className={classes.budgetStats}>
               <div className={classes.statsItem}>

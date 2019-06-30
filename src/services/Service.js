@@ -215,6 +215,31 @@ export default class BudgetService {
     `);
   }
 
+  static async addTransaction(transaction) {
+    const params = [
+      `expenseItemID: "${transaction.expenseItemID}"`,
+      `name: "${transaction.name}"`,
+      `total: ${transaction.total}`
+    ];
+
+    if (transaction.description) {
+      params.push(`description: "${transaction.description}"`);
+    }
+
+    const res = await this._postRequest(`
+      mutation {
+        addTransaction(${params.join(',')}) {
+          id
+          name
+          total
+          creationDate
+        }
+      }
+    `);
+
+    return res.addTransaction;
+  }
+
   static async  _postRequest(body) {
     const res = await fetch(process.env.REACT_APP_API_URL, {
       method: 'POST',
