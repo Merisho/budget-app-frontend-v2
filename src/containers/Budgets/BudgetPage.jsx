@@ -36,23 +36,13 @@ class BudgetPage extends Component {
     this.budgetId = props.match.params.id;
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.budget && props.budget.expenseItems) {
-      return {
-        ...state,
-        displayedExpenseItems: props.budget.expenseItems
-      };
-    }
-
-    return {
-      ...state
-    };
-  }
-
   componentDidMount() {
     if (!this.props.budget || this.props.budget.id !== this.budgetId) {
       this.loadBudget(this.budgetId);
     } else {
+      this.setState({
+        displayedExpenseItems: this.props.budget.expenseItems
+      });
       this.loaded();
     }
   }
@@ -79,7 +69,8 @@ class BudgetPage extends Component {
   }
 
   searchExpenseItems(query) {
-    const expenseItems = this.props.budget.expenseItems.filter(i => i.name.includes(query));
+    const q = query.toLowerCase();
+    const expenseItems = this.props.budget.expenseItems.filter(i => i.name.toLowerCase().includes(q));
     this.setState({
       displayedExpenseItems: expenseItems
     });

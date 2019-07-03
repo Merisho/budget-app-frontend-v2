@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
+import Input from '@material-ui/core/Input';
+import { withStyles } from '@material-ui/core/styles';
 
 import Service from '../../services/Service';
 import Loading from '../../components/Loading/Loading';
@@ -9,12 +11,20 @@ import CreateTransaction from '../../components/Actions/Transaction/CreateTransa
 import TransactionsTable from './Transactions/TransactionsTable';
 import ExpenseItemDetails from './ExpenseItemDetails';
 
+const styles = {
+  transactionSearch: {
+    width: '20%',
+    marginRight: '32px'
+  }
+};
+
 class ExpenseItemPage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      loading: true
+      loading: true,
+      displayedTransactions: []
     };
 
     this.expenseItemId = this.props.match.params.id;
@@ -24,6 +34,9 @@ class ExpenseItemPage extends Component {
     if (!this.props.expenseItem || this.props.expenseItem.id !== this.expenseItemId) {
       this.loadExpenseItem(this.expenseItemId);
     } else {
+      this.setState({
+        displayedTransactions: this.props.expenseItem.transactions
+      });
       this.loaded();
     }
   }
@@ -33,6 +46,9 @@ class ExpenseItemPage extends Component {
 
     const expenseItem = await Service.fetchExpenseItem(id);
     this.props.setExpenseItem(expenseItem);
+    this.setState({
+      displayedTransactions: expenseItem.transactions
+    });
 
     this.loaded();
   }
@@ -63,6 +79,14 @@ class ExpenseItemPage extends Component {
     this.props.showError(errMessage);
   }
 
+  searchTransactions = query => {
+    const q = query.toLowerCase();
+    const transactions = this.props.expenseItem.transactions.filter(t => t.name.toLowerCase().includes(q));
+    this.setState({
+      displayedTransactions: transactions
+    });
+  }
+
   render() {
     let expenseItemView = null;
     if (this.props.expenseItem) {
@@ -77,10 +101,13 @@ class ExpenseItemPage extends Component {
 
           <ExpenseItemDetails expenseItem={this.props.expenseItem} />
 
+          <br />
+
+          <Input type="text" placeholder="Search" className={this.props.classes.transactionSearch} onChange={event => this.searchTransactions(event.target.value)} />
           <CreateTransaction expenseItem={this.props.expenseItem} onCreate={this.handleTransactionCreate} />
           
           <TransactionsTable
-            transactions={this.props.expenseItem.transactions}
+            transactions={this.state.displayedTransactions}
             onDelete={this.handleTransactionDelete}
             onEdit={this.handleTransactionEdit}
             onError={this.handleError}
@@ -106,4 +133,4 @@ const mapDispatchToProps = dispatch => ({
   showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } }),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ExpenseItemPage);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ExpenseItemPage));
