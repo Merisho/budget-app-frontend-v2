@@ -7,6 +7,7 @@ import Loading from '../../components/Loading/Loading';
 import BackButton from '../../components/Buttons/Back';
 import CreateTransaction from '../../components/Actions/Transaction/CreateTransaction';
 import TransactionsTable from './Transactions/TransactionsTable';
+import ExpenseItemDetails from './ExpenseItemDetails';
 
 class ExpenseItemPage extends Component {
   constructor(props) {
@@ -36,7 +37,7 @@ class ExpenseItemPage extends Component {
     this.loaded();
   }
 
-  handleTransactionCreate() {
+  handleTransactionCreate = () => {
     this.loadExpenseItem(this.expenseItemId);
   }
 
@@ -74,7 +75,9 @@ class ExpenseItemPage extends Component {
             {this.props.expenseItem.description}
           </Typography>
 
-          <CreateTransaction expenseItem={this.props.expenseItem} onCreate={() => this.handleTransactionCreate()} />
+          <ExpenseItemDetails expenseItem={this.props.expenseItem} />
+
+          <CreateTransaction expenseItem={this.props.expenseItem} onCreate={this.handleTransactionCreate} />
           
           <TransactionsTable
             transactions={this.props.expenseItem.transactions}

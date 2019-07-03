@@ -58,6 +58,8 @@ export default class BudgetService {
           name
           budgetID
           description
+          total
+          transactionsTotal
           transactions {
             id
             name
