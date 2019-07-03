@@ -240,7 +240,39 @@ export default class BudgetService {
     return res.addTransaction;
   }
 
-  static async  _postRequest(body) {
+  static async deleteTransaction(transactionId) {
+    await this._postRequest(`
+      mutation {
+        deleteTransaction(id: "${transactionId}") {
+          id
+        }
+      }
+    `);
+  }
+
+  static async updateTransaction(transactionId, data) {
+    const params = [
+      `id: "${transactionId}"`,
+      `name: "${data.name}"`,
+      `total: ${data.total}`,
+      `description: "${data.description}"`
+    ];
+
+    const res  = await this._postRequest(`
+      mutation {
+        updateTransaction(${params.join(',')}) {
+          id
+          name
+          total
+          creationDate
+        }
+      }
+    `);
+
+    return res.updateTransaction;
+  }
+
+  static async _postRequest(body) {
     const res = await fetch(process.env.REACT_APP_API_URL, {
       method: 'POST',
       body

@@ -12,14 +12,8 @@ import DeleteExpenseItemConfirmation from './DeleteExpenseItemConfirmation';
 import EditExpenseItemForm from '../../../components/Forms/ExpenseItem/EditExpenseItemForm';
 
 const styles = theme => ({
-  deleteItem: {
-    color: theme.palette.action.delete,
-    cursor: 'pointer'
-  },
-  editItem: {
-    color: theme.palette.action.edit,
-    cursor: 'pointer'
-  }
+  deleteItem: theme.actionIcons.delete,
+  editItem: theme.actionIcons.edit
 });
 
 function ExpenseItemTableRow(props) {

@@ -7,10 +7,9 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import DeleteForever from '@material-ui/icons/DeleteForever';
 
-import Money from '../../../components/Money/Money';
-import DateValue from '../../../components/Values/Date';
+import TransactionTableRow from './TransactionTableRow';
+import Service from '../../../services/Service';
 
 const styles = {
   root: {
@@ -39,6 +38,26 @@ const styles = {
 function TransactionsTable(props) {
   const { classes } = props;
 
+  async function handleDelete(transaction) {
+    try {
+      await Service.deleteTransaction(transaction.id);
+      props.onDelete(transaction);
+    } catch(err) {
+      console.error(err);
+      props.onError('An error occured. Please try again later');
+    }
+  }
+
+  async function handleEdit(id, data) {
+    try {
+      const editedTransaction = await Service.updateTransaction(id, data);
+      props.onEdit(editedTransaction);
+    } catch(err) {
+      console.error(err);
+      props.onError('An error occured. Please try again');
+    }
+  }
+
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
@@ -53,19 +72,7 @@ function TransactionsTable(props) {
         </TableHead>
         <TableBody>
           {props.transactions && props.transactions.map(transaction => (
-            <TableRow key={transaction.id}>
-              <TableCell>{transaction.name}</TableCell>
-              <TableCell>
-                <Money value={transaction.total} />
-              </TableCell>
-              <TableCell>
-                <DateValue>{transaction.creationDate}</DateValue>
-              </TableCell>
-              <TableCell>{transaction.description}</TableCell>
-              <TableCell>
-                <DeleteForever color="error" />
-              </TableCell>
-            </TableRow>
+            <TransactionTableRow key={transaction.id} transaction={transaction} onDelete={handleDelete} onEdit={editedTransaction => handleEdit(transaction.id, editedTransaction)} />
           ))}
         </TableBody>
       </Table>
@@ -74,7 +81,10 @@ function TransactionsTable(props) {
 }
 
 TransactionsTable.propTypes = {
-  transactions: PropTypes.array
+  transactions: PropTypes.array,
+  onDelete: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onError: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(TransactionsTable);

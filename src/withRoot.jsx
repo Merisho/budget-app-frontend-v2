@@ -7,8 +7,9 @@ import red from '@material-ui/core/colors/red';
 import amber from '@material-ui/core/colors/amber';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-// A theme with custom primary and secondary color.
-// It's optional.
+const deleteColor = red[700];
+const editColor = amber[600];
+
 const theme = createMuiTheme({
   palette: {
     state: {
@@ -16,9 +17,9 @@ const theme = createMuiTheme({
     },
     action: {
       approve: green[500],
-      delete: red[700],
+      delete: deleteColor,
       highlightedDelete: red[500],
-      edit: amber[600],
+      edit: editColor,
       highlightedEdit: amber[400]
     },
     background: {
@@ -36,6 +37,16 @@ const theme = createMuiTheme({
     },
     secondaryText: {
       main: '#ffffff'
+    }
+  },
+  actionIcons: {
+    delete: {
+      color: deleteColor,
+      cursor: 'pointer'
+    },
+    edit: {
+      color: editColor,
+      cursor: 'pointer'
     }
   },
   typography: {

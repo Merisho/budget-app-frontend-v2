@@ -48,6 +48,20 @@ class ExpenseItemPage extends Component {
     this.setState({ loading: false });
   }
 
+  handleTransactionDelete = transaction => {
+    this.props.showSuccess(`Transaction "${transaction.name}" has been deleted`);
+    this.loadExpenseItem(this.expenseItemId);
+  }
+
+  handleTransactionEdit = transaction => {
+    this.props.showSuccess(`Transaction "${transaction.name}" has been edited`);
+    this.loadExpenseItem(this.expenseItemId);
+  }
+
+  handleError = errMessage => {
+    this.props.showError(errMessage);
+  }
+
   render() {
     let expenseItemView = null;
     if (this.props.expenseItem) {
@@ -62,7 +76,12 @@ class ExpenseItemPage extends Component {
 
           <CreateTransaction expenseItem={this.props.expenseItem} onCreate={() => this.handleTransactionCreate()} />
           
-          <TransactionsTable transactions={this.props.expenseItem.transactions} />
+          <TransactionsTable
+            transactions={this.props.expenseItem.transactions}
+            onDelete={this.handleTransactionDelete}
+            onEdit={this.handleTransactionEdit}
+            onError={this.handleError}
+          />
         </div>
       );
     }
@@ -79,7 +98,9 @@ const mapStateToProps = state => ({
   expenseItem: state.currentExpenseItem
 });
 const mapDispatchToProps = dispatch => ({
-  setExpenseItem: expenseItem => dispatch({ type: 'SET_CURRENT_EXPENSE_ITEM', payload: { expenseItem } })
+  setExpenseItem: expenseItem => dispatch({ type: 'SET_CURRENT_EXPENSE_ITEM', payload: { expenseItem } }),
+  showSuccess: message => dispatch({ type: 'SHOW_SUCCESS', payload: { message } }),
+  showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExpenseItemPage);
