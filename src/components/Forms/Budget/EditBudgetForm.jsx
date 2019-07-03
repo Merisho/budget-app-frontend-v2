@@ -168,8 +168,8 @@ function EditBudgetForm(props) {
       name: state.name,
       total: state.total,
       description: state.description,
-      startDate: state.startDate,
-      endDate: state.endDate
+      startDate: new Date(state.startDate),
+      endDate: new Date(state.endDate)
     });
   }
 

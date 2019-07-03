@@ -41,7 +41,7 @@ class BudgetPage extends Component {
       this.loadBudget(this.budgetId);
     } else {
       this.setState({
-        displayedExpenseItems: this.props.budget.expenseItems
+        displayedExpenseItems: this.props.budget.expenseItems || []
       });
       this.loaded();
     }
@@ -52,7 +52,7 @@ class BudgetPage extends Component {
 
     const budget = await Service.fetchBudget(budgetId);
     this.setState({
-      displayedExpenseItems: budget.expenseItems
+      displayedExpenseItems: budget.expenseItems || []
     });
 
     this.props.setBudget(budget);

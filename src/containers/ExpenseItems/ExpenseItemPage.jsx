@@ -53,7 +53,8 @@ class ExpenseItemPage extends Component {
     this.loaded();
   }
 
-  handleTransactionCreate = () => {
+  handleTransactionCreate = transaction => {
+    this.props.showSuccess(`Transaction "${transaction.name}" has been created`);
     this.loadExpenseItem(this.expenseItemId);
   }
 

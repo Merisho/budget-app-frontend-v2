@@ -107,9 +107,12 @@ export default class BudgetService {
     const params = [
       `id: "${expenseItemId}"`,
       `name: "${data.name}"`,
-      `total: ${data.total}`,
-      `description: "${data.description}"`
+      `total: ${data.total}`
     ];
+
+    if (data.description) {
+      params.push(`description: "${data.description}"`);
+    }
 
     const res  = await this._postRequest(`
       mutation {
@@ -176,9 +179,12 @@ export default class BudgetService {
       `name: "${data.name}"`,
       `total: ${data.total}`,
       `startDate: "${data.startDate.toISOString()}"`,
-      `endDate: "${data.endDate.toISOString()}"`,
-      `description: "${data.description}"`
+      `endDate: "${data.endDate.toISOString()}"`
     ];
+
+    if (data.description) {
+      params.push(`description: "${data.description}"`);
+    }
 
     const res = await this._postRequest(`
       mutation {
@@ -256,9 +262,12 @@ export default class BudgetService {
     const params = [
       `id: "${transactionId}"`,
       `name: "${data.name}"`,
-      `total: ${data.total}`,
-      `description: "${data.description}"`
+      `total: ${data.total}`
     ];
+
+    if (data.description) {
+      params.push(`description: "${data.description}"`);
+    }
 
     const res  = await this._postRequest(`
       mutation {
