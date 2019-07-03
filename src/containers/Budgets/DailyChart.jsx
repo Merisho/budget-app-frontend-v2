@@ -42,8 +42,8 @@ function extractTransactions(budget) {
 
 function groupTotalsByDate(transactions) {
   const groups = {};
-
-  transactions.forEach(t => {
+  const ascending = (t1, t2) => new Date(t1.creationDate) - new Date(t2.creationDate);
+  const addDateTotal = t => {
     const date = formatDate(t.creationDate);
     const total = +t.total;
     if (groups[date]) {
@@ -51,7 +51,9 @@ function groupTotalsByDate(transactions) {
     } else {
       groups[date] = { Total: total, date };
     }
-  });
+  }
+
+  transactions.sort(ascending).forEach(addDateTotal);
 
   return Object.values(groups);
 }
