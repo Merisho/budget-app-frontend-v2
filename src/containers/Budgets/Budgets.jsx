@@ -44,7 +44,7 @@ class Budgets extends Component {
     }
 
     if (!this.props.budgets) {
-      const budgets = await Service.fetchAllUserBudgets(this.props.user.id);
+      const budgets = await Service.fetchAllUserBudgets(this.props.user.id) || [];
       this.setState({
         displayedBudgets: budgets
       });
