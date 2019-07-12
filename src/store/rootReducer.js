@@ -2,9 +2,7 @@ const init = {
   currentBudget: null,
   currentExpenseItem: null,
   allBudgets: null,
-  user: {
-    id: '2fa434ad-5611-4e1e-8aa4-61616577bc72'
-  },
+  user: null,
   errorMessage: '',
   showError: false,
   successMessage: '',
@@ -117,6 +115,11 @@ export default (state = init, action) => {
       return {
         ...state,
         showSuccess: false
+      };
+    case 'SET_USER':
+      return {
+        ...state,
+        user: action.payload.user
       };
     default:
       return state;

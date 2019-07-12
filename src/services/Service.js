@@ -283,6 +283,20 @@ export default class BudgetService {
     return res.updateTransaction;
   }
 
+  static async authUser(accessToken) {
+    const data = await this._postRequest(`
+      mutation {
+        authUser(accessToken: "${accessToken}") {
+            id
+            login
+            email
+        }
+      }
+    `);
+
+    return data.authUser;
+  }
+
   static async _postRequest(body) {
     const res = await fetch(process.env.REACT_APP_API_URL, {
       method: 'POST',

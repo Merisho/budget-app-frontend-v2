@@ -11,6 +11,7 @@ import Budgets from './containers/Budgets/Budgets';
 import BudgetPage from './containers/Budgets/BudgetPage';
 import ExpenseItemPage from './containers/ExpenseItems/ExpenseItemPage';
 import StatusSnackbar from './components/Snackbars/StatusSnackbar';
+import withAuth from './higherOrderComponents/withAuth';
 
 const styles = theme => ({
   root: {
@@ -67,4 +68,10 @@ const mapDispatchToProps = dispatch => ({
   hideSuccess: () => dispatch({ type: 'HIDE_SUCCESS' })
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRoot(withStyles(styles)(App)));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withAuth(
+    withRoot(
+      withStyles(styles)(App)
+    )
+  )
+);
