@@ -17,7 +17,8 @@ function CreateTransaction(props) {
       name: data.name,
       total: +data.total,
       description: data.description,
-      expenseItemID: props.expenseItem.id
+      expenseItemID: props.expenseItem.id,
+      creationDate: data.creationDate.toISOString()
     });
 
     close();

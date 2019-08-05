@@ -6,12 +6,23 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes from 'prop-types';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
 
 import MoneyField from '../../Money/MoneyField';
+
+const styles = {
+  dateField: {
+    width: '100%'
+  }
+};
 
 function EditTransactionForm(props) {
   const [total, setTotal] = React.useState(props.transaction.total);
   const [name, setName] = React.useState(props.transaction.name);
+  const [creationDate, setCreationDate] = React.useState(props.transaction.creationDate);
   const [description, setDescription] = React.useState(props.transaction.description || '');
   const [nameInvalid, setNameInvalid] = React.useState(false);
   const [totalInvalid, setTotalInvalid] = React.useState(false);
@@ -27,7 +38,8 @@ function EditTransactionForm(props) {
     props.onEdit({
       name,
       total,
-      description
+      description,
+      creationDate
     });
   }
 
@@ -72,6 +84,20 @@ function EditTransactionForm(props) {
             onChange={e => setDescription(e.target.value)}
             fullWidth
           />
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Grid container justify="flex-start">
+              <DateTimePicker
+                margin="normal"
+                required
+                id="date"
+                label="Date"
+                value={creationDate}
+                onChange={setCreationDate}
+                className={props.classes.dateField}
+                disableFuture
+              />
+            </Grid>
+          </MuiPickersUtilsProvider>
         </form>
       </DialogContent>
       <DialogActions>
@@ -89,4 +115,4 @@ EditTransactionForm.propTypes = {
   open: PropTypes.bool
 };
 
-export default EditTransactionForm;
+export default withStyles(styles)(EditTransactionForm);

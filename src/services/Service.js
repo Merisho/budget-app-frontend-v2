@@ -227,7 +227,8 @@ export default class BudgetService {
     const params = [
       `expenseItemID: "${transaction.expenseItemID}"`,
       `name: "${transaction.name}"`,
-      `total: ${transaction.total}`
+      `total: ${transaction.total}`,
+      `creationDate: "${transaction.creationDate}"`
     ];
 
     if (transaction.description) {
@@ -262,7 +263,8 @@ export default class BudgetService {
     const params = [
       `id: "${transactionId}"`,
       `name: "${data.name}"`,
-      `total: ${data.total}`
+      `total: ${data.total}`,
+      `creationDate: "${data.creationDate}"`
     ];
 
     if (data.description) {

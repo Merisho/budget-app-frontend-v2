@@ -50,7 +50,10 @@ function TransactionsTable(props) {
 
   async function handleEdit(id, data) {
     try {
-      const editedTransaction = await Service.updateTransaction(id, data);
+      const editedTransaction = await Service.updateTransaction(id, {
+        ...data,
+        creationDate: data.creationDate.toISOString()
+      });
       props.onEdit(editedTransaction);
     } catch(err) {
       console.error(err);
