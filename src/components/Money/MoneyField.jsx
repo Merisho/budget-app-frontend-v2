@@ -7,6 +7,10 @@ function MoneyField(props) {
 
   function change(e) {
     const total = prepareTotal(e.target.value);
+    if (isNaN(+total)) {
+      return;
+    }
+    
     setValue(formatDigits(total));
     props.onChange && props.onChange(total);
   }
