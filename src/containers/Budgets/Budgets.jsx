@@ -8,6 +8,14 @@ import BudgetTile from './BudgetTile';
 import Loading from '../../components/Loading/Loading';
 import Service from '../../services/Service';
 import CreateBudget from '../../components/Actions/CreateBudget/CreateBudget';
+import {
+  SET_ALL_BUDGETS,
+  CREATE_BUDGET,
+  EDIT_BUDGET,
+  DELETE_BUDGET,
+  SHOW_ERROR,
+  SHOW_SUCCESS
+} from '../../store/actions';
 
 const styles = theme => ({
   actionBar: {
@@ -23,7 +31,8 @@ class Budgets extends Component {
     super(props);
 
     this.state = {
-      displayedBudgets: []
+      displayedBudgets: [],
+      loading: true
     };
   }
 
@@ -43,13 +52,18 @@ class Budgets extends Component {
       throw new Error('No user');
     }
 
-    if (!this.props.budgets) {
+    if (this.props.budgets.length === 0) {
       const budgets = await Service.fetchAllUserBudgets(this.props.user.id) || [];
       this.setState({
+        loading: false,
         displayedBudgets: budgets
       });
 
       this.props.setAllBudgets(budgets);
+    } else {
+      this.setState({
+        loading: false
+      });
     }
   }
 
@@ -94,7 +108,7 @@ class Budgets extends Component {
     const { classes } = this.props;
     return (
       <div>
-        <Loading inProgress={!this.props.budgets}>
+        <Loading inProgress={this.state.loading}>
           <div className={classes.actionBar}>
             <Input type="text" placeholder="Search" onChange={event => this.searchBudget(event.target.value)} className={classes.search} />
             <CreateBudget user={this.props.user} created={this.handleBudgetCreated} />
@@ -115,15 +129,15 @@ class Budgets extends Component {
 
 const mapStateToProps = state => ({
   user: state.user,
-  budgets: state.allBudgets
+  budgets: state.budget.all
 });
 const mapDispatchToProps = dispatch => ({
-  setAllBudgets: budgets => dispatch({ type: 'SET_ALL_BUDGETS', payload: { budgets } }),
-  createBudget: budget => dispatch({ type: 'CREATE_BUDGET', payload: { budget } }),
-  editBudget: (budgetId, budget) => dispatch({ type: 'EDIT_BUDGET', payload: { budgetId, budget } }),
-  deleteBudget: budgetId => dispatch({ type: 'DELETE_BUDGET', payload: { budgetId } }),
-  showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } }),
-  showSuccess: message => dispatch({ type: 'SHOW_SUCCESS', payload: { message } })
+  setAllBudgets: budgets => dispatch({ type: SET_ALL_BUDGETS, payload: { budgets } }),
+  createBudget: budget => dispatch({ type: CREATE_BUDGET, payload: { budget } }),
+  editBudget: (budgetId, budget) => dispatch({ type: EDIT_BUDGET, payload: { budgetId, budget } }),
+  deleteBudget: budgetId => dispatch({ type: DELETE_BUDGET, payload: { budgetId } }),
+  showError: message => dispatch({ type: SHOW_ERROR, payload: { message } }),
+  showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } })
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Budgets));

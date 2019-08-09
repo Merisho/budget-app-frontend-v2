@@ -10,6 +10,11 @@ import BackButton from '../../components/Buttons/Back';
 import CreateTransaction from '../../components/Actions/Transaction/CreateTransaction';
 import TransactionsTable from './Transactions/TransactionsTable';
 import ExpenseItemDetails from './ExpenseItemDetails';
+import {
+  SET_CURRENT_EXPENSE_ITEM,
+  SHOW_SUCCESS,
+  SHOW_ERROR
+} from '../../store/actions';
 
 const styles = {
   transactionSearch: {
@@ -126,12 +131,12 @@ class ExpenseItemPage extends Component {
 }
 
 const mapStateToProps = state => ({
-  expenseItem: state.currentExpenseItem
+  expenseItem: state.expenseItem.current
 });
 const mapDispatchToProps = dispatch => ({
-  setExpenseItem: expenseItem => dispatch({ type: 'SET_CURRENT_EXPENSE_ITEM', payload: { expenseItem } }),
-  showSuccess: message => dispatch({ type: 'SHOW_SUCCESS', payload: { message } }),
-  showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } }),
+  setExpenseItem: expenseItem => dispatch({ type: SET_CURRENT_EXPENSE_ITEM, payload: { expenseItem } }),
+  showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } }),
+  showError: message => dispatch({ type: SHOW_ERROR, payload: { message } }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ExpenseItemPage));

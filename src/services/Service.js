@@ -14,6 +14,7 @@ export default class BudgetService {
           transactionsTotal
           expenseItems {
             id
+            budgetID
             name
             total
             description
@@ -36,12 +37,14 @@ export default class BudgetService {
         user(id: "${userId}") {
           budgets {
             id
-            description
             name
             total
-            allowed
             startDate
             endDate
+            description
+            free
+            allowed
+            transactionsTotal
           }
         }
       }

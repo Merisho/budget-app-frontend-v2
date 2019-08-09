@@ -12,6 +12,15 @@ import BudgetDetails from './BudgetDetails';
 import Service from '../../services/Service';
 import DailyChart from './DailyChart';
 import CreateExpenseItem from '../../components/Actions/CreateExpenseItem/CreateExpenseItem';
+import {
+  SHOW_ERROR,
+  SHOW_SUCCESS,
+  LOAD_BUDGET,
+  CREATE_EXPENSE_ITEM,
+  DELETE_EXPENSE_ITEM,
+  EDIT_EXPENSE_ITEM,
+  LOAD_EXPENSE_ITEMS
+} from '../../store/actions';
 
 const styles = {
   expenseItemsSeacrh: {
@@ -37,7 +46,7 @@ class BudgetPage extends Component {
   }
 
   componentDidMount() {
-    if (!this.props.budget || this.props.budget.id !== this.budgetId) {
+    if (!this.props.budget) {
       this.loadBudget(this.budgetId);
     } else {
       this.setState({
@@ -55,7 +64,8 @@ class BudgetPage extends Component {
       displayedExpenseItems: budget.expenseItems || []
     });
 
-    this.props.setBudget(budget);
+    this.props.loadBudget(budget);
+    this.props.loadExpenseItems(budget.expenseItems);
 
     this.loaded();
   }
@@ -140,20 +150,26 @@ class BudgetPage extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    budget: state.currentBudget
-  };
+const mapStateToProps = (state, ownProps) => {
+    const { id } = ownProps.match.params;
+    const budget = state.budget.all.find(b => b.id === id);
+    return {
+      budget: {
+        ...budget,
+        expenseItems: state.expenseItem.all.filter(i => i.budgetID === id)
+      }
+    }
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setBudget: budget => dispatch({ type: 'SET_CURRENT_BUDGET', payload: { budget } }),
-    createExpenseItem: expenseItem => dispatch({ type: 'CREATE_EXPENSE_ITEM', payload: { expenseItem } }),
-    deleteExpenseItem: expenseItemId => dispatch({ type: 'DELETE_EXPENSE_ITEM', payload: { expenseItemId } }),
-    editExpenseItem: (expenseItemId, expenseItem) => dispatch({ type: 'EDIT_EXPENSE_ITEM', payload: { expenseItemId, expenseItem } }),
-    showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } }),
-    showSuccess: message => dispatch({ type: 'SHOW_SUCCESS', payload: { message } })
+    loadBudget: budget => dispatch({ type: LOAD_BUDGET, payload: { budget } }),
+    loadExpenseItems: expenseItems => dispatch({ type: LOAD_EXPENSE_ITEMS, payload: { expenseItems } }),
+    createExpenseItem: expenseItem => dispatch({ type: CREATE_EXPENSE_ITEM, payload: { expenseItem } }),
+    deleteExpenseItem: expenseItemId => dispatch({ type: DELETE_EXPENSE_ITEM, payload: { expenseItemId } }),
+    editExpenseItem: (expenseItemId, expenseItem) => dispatch({ type: EDIT_EXPENSE_ITEM, payload: { expenseItemId, expenseItem } }),
+    showError: message => dispatch({ type: SHOW_ERROR, payload: { message } }),
+    showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } })
   };
 };
 
