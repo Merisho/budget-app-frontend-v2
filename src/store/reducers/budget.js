@@ -2,7 +2,7 @@ import * as actions from '../actions';
 
 const init = {
   current: null,
-  all: []
+  all: {}
 };
 
 export default (state = init, action) => {
@@ -10,7 +10,10 @@ export default (state = init, action) => {
     case actions.LOAD_BUDGET:
       return {
         ...state,
-        all: [ ...state.all, action.payload.budget ]
+        all: {
+          ...state.all,
+          [action.payload.budget.id]: action.payload.budget
+        }
       };
 
     case actions.SET_ALL_BUDGETS:
@@ -22,31 +25,29 @@ export default (state = init, action) => {
     case actions.CREATE_BUDGET: 
       return {
         ...state,
-        all: [ action.payload.budget, ...state.all ]
+        all: {
+          ...state.all,
+          [action.payload.budget.id]: action.payload.budget,
+        }
       };
 
     case actions.EDIT_BUDGET:
-      const index = state.all.findIndex(b => b.id === action.payload.budgetId);
-      if (index === -1) {
-        return state;
-      }
-
-      const editedBudget = {
-        ...state.all[index],
-        ...action.payload.budget
-      };
-
       return {
         ...state,
-        all: [ ...state.all.slice(0, index), editedBudget, ...state.all.slice(index + 1) ]
+        all: {
+          ...state.all,
+          [action.payload.budgetId]: action.payload.budget
+        }
       };
 
     case actions.DELETE_BUDGET:
-      const all = state.all.filter(b => b.id !== action.payload.budgetId);
+      const all = { ...state.all };
+      delete all[action.payload.budgetId];
       return {
         ...state,
         all
       };
+
     default:
       return state;
   }

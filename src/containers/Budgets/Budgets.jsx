@@ -9,10 +9,6 @@ import Loading from '../../components/Loading/Loading';
 import Service from '../../services/Service';
 import CreateBudget from '../../components/Actions/CreateBudget/CreateBudget';
 import {
-  SET_ALL_BUDGETS,
-  CREATE_BUDGET,
-  EDIT_BUDGET,
-  DELETE_BUDGET,
   SHOW_ERROR,
   SHOW_SUCCESS
 } from '../../store/actions';
@@ -34,13 +30,8 @@ class Budgets extends Component {
       displayedBudgets: [],
       loading: true
     };
-  }
 
-  static getDerivedStateFromProps(props, state) {
-    return {
-      ...state,
-      displayedBudgets: props.budgets || []
-    };
+    this.budgets = [];
   }
 
   componentDidMount() {
@@ -52,39 +43,36 @@ class Budgets extends Component {
       throw new Error('No user');
     }
 
-    if (this.props.budgets.length === 0) {
-      const budgets = await Service.fetchAllUserBudgets(this.props.user.id) || [];
-      this.setState({
-        loading: false,
-        displayedBudgets: budgets
-      });
+    this.setState({
+      loading: true
+    });
 
-      this.props.setAllBudgets(budgets);
-    } else {
-      this.setState({
-        loading: false
-      });
-    }
-  }
+    this.budgets = await Service.fetchAllUserBudgetPreviews(this.props.user.id) || [];
+
+    this.setState({
+      loading: false,
+      displayedBudgets: [ ...this.budgets ]
+    });
+}
 
   searchBudget(query) {
     this.setState({
-      displayedBudgets: this.props.budgets.filter(b => b.name.includes(query))
+      displayedBudgets: this.budgets.filter(b => b.name.includes(query))
     });
   }
 
   handleBudgetCreated = budget => {
-    this.props.createBudget(budget);
+    this.loadBudgets();
     this.props.showSuccess(`Budget "${budget.name}" has been created`);
   }
 
   budgetDeleted = budget => {
-    this.props.deleteBudget(budget.id);
+    this.loadBudgets();
     this.props.showSuccess(`Budget "${budget.name}" has been deleted`);
   }
 
   budgetEdited = budget => {
-    this.props.editBudget(budget.id, budget);
+    this.loadBudgets();
     this.props.showSuccess(`Budget "${budget.name}" has been edited`);
   }
 
@@ -127,15 +115,12 @@ class Budgets extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  user: state.user,
-  budgets: state.budget.all
-});
+const mapStateToProps = state => {
+  return {
+    user: state.user
+  };
+};
 const mapDispatchToProps = dispatch => ({
-  setAllBudgets: budgets => dispatch({ type: SET_ALL_BUDGETS, payload: { budgets } }),
-  createBudget: budget => dispatch({ type: CREATE_BUDGET, payload: { budget } }),
-  editBudget: (budgetId, budget) => dispatch({ type: EDIT_BUDGET, payload: { budgetId, budget } }),
-  deleteBudget: budgetId => dispatch({ type: DELETE_BUDGET, payload: { budgetId } }),
   showError: message => dispatch({ type: SHOW_ERROR, payload: { message } }),
   showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } })
 });

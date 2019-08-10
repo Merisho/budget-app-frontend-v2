@@ -31,7 +31,7 @@ export default class BudgetService {
     return res.budget;
   }
 
-  static async fetchAllUserBudgets(userId) {
+  static async fetchAllUserBudgetPreviews(userId) {
     const res = await this._postRequest(`
       {
         user(id: "${userId}") {
@@ -42,9 +42,7 @@ export default class BudgetService {
             startDate
             endDate
             description
-            free
             allowed
-            transactionsTotal
           }
         }
       }

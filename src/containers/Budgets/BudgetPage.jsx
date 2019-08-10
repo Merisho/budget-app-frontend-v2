@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Input from '@material-ui/core/Input';
 import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { connect, batch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
 import Loading from '../../components/Loading/Loading';
@@ -60,12 +60,10 @@ class BudgetPage extends Component {
     this.loading();
 
     const budget = await Service.fetchBudget(budgetId);
+    this.props.loadBudget(budget);
     this.setState({
       displayedExpenseItems: budget.expenseItems || []
     });
-
-    this.props.loadBudget(budget);
-    this.props.loadExpenseItems(budget.expenseItems);
 
     this.loaded();
   }
@@ -152,19 +150,40 @@ class BudgetPage extends Component {
 
 const mapStateToProps = (state, ownProps) => {
     const { id } = ownProps.match.params;
-    const budget = state.budget.all.find(b => b.id === id);
+    const budget = state.budget.all[id];
+    const expenseItems = [];
+
+    for (const itemId in state.expenseItem.all) {
+      const item = state.expenseItem.all[itemId];
+      if (item.budgetID === id) {
+        expenseItems.push(item);
+      }
+    }
+
+    if (!budget) {
+      return {
+        budget: null
+      };
+    }
+
     return {
       budget: {
         ...budget,
-        expenseItems: state.expenseItem.all.filter(i => i.budgetID === id)
+        expenseItems
       }
     }
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadBudget: budget => dispatch({ type: LOAD_BUDGET, payload: { budget } }),
-    loadExpenseItems: expenseItems => dispatch({ type: LOAD_EXPENSE_ITEMS, payload: { expenseItems } }),
+    loadBudget: budget => {
+      const { expenseItems: expenseItemsArr } = budget;
+      const expenseItems = expenseItemsArrToObj(expenseItemsArr);
+      batch(() => {
+        dispatch({ type: LOAD_BUDGET, payload: { budget } });
+        dispatch({ type: LOAD_EXPENSE_ITEMS, payload: { expenseItems } });
+      });
+    },
     createExpenseItem: expenseItem => dispatch({ type: CREATE_EXPENSE_ITEM, payload: { expenseItem } }),
     deleteExpenseItem: expenseItemId => dispatch({ type: DELETE_EXPENSE_ITEM, payload: { expenseItemId } }),
     editExpenseItem: (expenseItemId, expenseItem) => dispatch({ type: EDIT_EXPENSE_ITEM, payload: { expenseItemId, expenseItem } }),
@@ -172,5 +191,12 @@ const mapDispatchToProps = dispatch => {
     showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } })
   };
 };
+
+function expenseItemsArrToObj(expenseItemsArr) {
+  const expenseItems = {};
+    expenseItemsArr.forEach(i => expenseItems[i.id] = i);
+
+    return expenseItems;
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(BudgetPage)));

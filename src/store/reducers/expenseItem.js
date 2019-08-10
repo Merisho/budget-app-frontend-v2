@@ -2,7 +2,7 @@ import * as actions from '../actions';
 
 const init = {
   current: null,
-  all: []
+  all: {}
 };
 
 export default (state = init, action) => {
@@ -16,30 +16,33 @@ export default (state = init, action) => {
     case actions.CREATE_EXPENSE_ITEM:
       return {
         ...state,
-        all: [ ...state.all, action.payload.expenseItem ]
+        all: {
+          ...state.all,
+          [action.payload.expenseItem.id]: action.payload.expenseItem
+        }
       };
 
     case actions.EDIT_EXPENSE_ITEM:
-      const expenseItemIndex = state.all.findIndex(ei => ei.id === action.payload.expenseItemId);
       return {
         ...state,
-        all: [
-          ...state.all.slice(0, expenseItemIndex),
-          action.payload.expenseItem,
-          ...state.all.slice(expenseItemIndex + 1)
-        ]
+        all: {
+          ...state.all,
+          [action.payload.expenseItem.id]: action.payload.expenseItem
+        }
       };
 
     case actions.DELETE_EXPENSE_ITEM:
+      const all = { ...state.all };
+      delete all[action.payload.expenseItemId];
+
       return {
         ...state,
-        all: state.all.filter(i => i.id !== action.payload.expenseItemId)
+        all
       };
     case actions.LOAD_EXPENSE_ITEMS:
-      const all = [ ...state.all ].filter(item => !action.payload.expenseItems.find(newItem => item.id === newItem.id));
       return {
         ...state,
-        all: all.concat(action.payload.expenseItems)
+        all: action.payload.expenseItems
       };
     default:
       return state;
