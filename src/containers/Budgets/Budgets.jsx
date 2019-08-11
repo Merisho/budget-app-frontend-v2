@@ -105,7 +105,7 @@ class Budgets extends Component {
           {this.state.displayedBudgets.filter(this.isCurrentBudget).map(budget => {
             return <BudgetTile budget={budget} key={budget.id} deleted={this.budgetDeleted} edited={this.budgetEdited} onError={this.budgetTileError} />
           })}
-          <Typography variant="h2">Inactive</Typography>
+          <Typography variant="h2">History</Typography>
           {this.state.displayedBudgets.filter(this.isNotCurrentBudget).map(budget => {
             return <BudgetTile budget={budget} key={budget.id} deleted={this.budgetDeleted} edited={this.budgetEdited} onError={this.budgetTileError} />
           })}

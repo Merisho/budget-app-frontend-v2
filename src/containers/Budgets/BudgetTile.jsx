@@ -51,11 +51,13 @@ const styles = theme => {
       position: 'absolute',
       width: '100%',
       height: '100%',
+      zIndex: 1,
       '&:hover': {
+        zIndex: 2,
         height: 260,
-        transition: theme.transitions.create('height', tileHeightTransitionParams),
+        transition: theme.transitions.create(['height', 'z-index'], tileHeightTransitionParams),
       },
-      transition: theme.transitions.create('height', {
+      transition: theme.transitions.create(['height', 'z-index'], {
         ...tileHeightTransitionParams,
         delay: 700
       })
