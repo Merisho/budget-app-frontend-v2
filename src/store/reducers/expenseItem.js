@@ -7,12 +7,6 @@ const init = {
 
 export default (state = init, action) => {
   switch (action.type) {
-    case actions.SET_CURRENT_EXPENSE_ITEM:
-      return {
-        ...state,
-        current: action.payload.expenseItem
-      };
-
     case actions.CREATE_EXPENSE_ITEM:
       return {
         ...state,
@@ -42,7 +36,10 @@ export default (state = init, action) => {
     case actions.LOAD_EXPENSE_ITEMS:
       return {
         ...state,
-        all: action.payload.expenseItems
+        all: {
+          ...state.all,
+          ...action.payload.expenseItems
+        }
       };
     default:
       return state;

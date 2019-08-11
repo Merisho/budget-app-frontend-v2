@@ -20,6 +20,9 @@ export default class BudgetService {
             description
             transactionsTotal
             transactions {
+              id
+              name
+              description
               total
               creationDate
             }

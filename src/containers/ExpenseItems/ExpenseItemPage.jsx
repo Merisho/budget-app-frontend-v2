@@ -11,9 +11,9 @@ import CreateTransaction from '../../components/Actions/Transaction/CreateTransa
 import TransactionsTable from './Transactions/TransactionsTable';
 import ExpenseItemDetails from './ExpenseItemDetails';
 import {
-  SET_CURRENT_EXPENSE_ITEM,
   SHOW_SUCCESS,
-  SHOW_ERROR
+  SHOW_ERROR,
+  LOAD_EXPENSE_ITEMS
 } from '../../store/actions';
 
 const styles = {
@@ -36,7 +36,7 @@ class ExpenseItemPage extends Component {
   }
 
   componentDidMount() {
-    if (!this.props.expenseItem || this.props.expenseItem.id !== this.expenseItemId) {
+    if (!this.props.expenseItem) {
       this.loadExpenseItem(this.expenseItemId);
     } else {
       this.setState({
@@ -50,7 +50,7 @@ class ExpenseItemPage extends Component {
     this.loading();
 
     const expenseItem = await Service.fetchExpenseItem(id);
-    this.props.setExpenseItem(expenseItem);
+    this.props.loadExpenseItem(expenseItem);
     this.setState({
       displayedTransactions: expenseItem.transactions
     });
@@ -130,11 +130,15 @@ class ExpenseItemPage extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  expenseItem: state.expenseItem.current
-});
+const mapStateToProps = (state, ownProps) => {
+  const { id } = ownProps.match.params;
+
+  return {
+    expenseItem: state.expenseItem.all[id]
+  };
+};
 const mapDispatchToProps = dispatch => ({
-  setExpenseItem: expenseItem => dispatch({ type: SET_CURRENT_EXPENSE_ITEM, payload: { expenseItem } }),
+  loadExpenseItem: expenseItem => dispatch({ type: LOAD_EXPENSE_ITEMS, payload: { expenseItems: { [expenseItem.id]: expenseItem } } }),
   showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } }),
   showError: message => dispatch({ type: SHOW_ERROR, payload: { message } }),
 });
