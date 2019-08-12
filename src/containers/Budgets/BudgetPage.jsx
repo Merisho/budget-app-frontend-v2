@@ -13,13 +13,9 @@ import Service from '../../services/Service';
 import DailyChart from './DailyChart';
 import CreateExpenseItem from '../../components/Actions/CreateExpenseItem/CreateExpenseItem';
 import {
-  SHOW_ERROR,
-  SHOW_SUCCESS,
-  LOAD_BUDGET,
-  CREATE_EXPENSE_ITEM,
-  DELETE_EXPENSE_ITEM,
-  EDIT_EXPENSE_ITEM,
-  LOAD_EXPENSE_ITEMS
+  budget as budgetActions,
+  expenseItem as expenseItemActions,
+  globalMessages as globalMessagesActions
 } from '../../store/actions';
 
 const styles = {
@@ -180,15 +176,15 @@ const mapDispatchToProps = dispatch => {
       const { expenseItems: expenseItemsArr } = budget;
       const expenseItems = expenseItemsArrToObj(expenseItemsArr);
       batch(() => {
-        dispatch({ type: LOAD_BUDGET, payload: { budget } });
-        dispatch({ type: LOAD_EXPENSE_ITEMS, payload: { expenseItems } });
+        dispatch(budgetActions.loadBudget(budget));
+        dispatch(expenseItemActions.loadExpenseItems(expenseItems));
       });
     },
-    createExpenseItem: expenseItem => dispatch({ type: CREATE_EXPENSE_ITEM, payload: { expenseItem } }),
-    deleteExpenseItem: expenseItemId => dispatch({ type: DELETE_EXPENSE_ITEM, payload: { expenseItemId } }),
-    editExpenseItem: (expenseItemId, expenseItem) => dispatch({ type: EDIT_EXPENSE_ITEM, payload: { expenseItemId, expenseItem } }),
-    showError: message => dispatch({ type: SHOW_ERROR, payload: { message } }),
-    showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } })
+    createExpenseItem: expenseItem => dispatch(expenseItemActions.createExpenseItem(expenseItem)),
+    deleteExpenseItem: expenseItemId => dispatch(expenseItemActions.deleteExpenseItem(expenseItemId)),
+    editExpenseItem: (expenseItemId, expenseItem) => dispatch(expenseItemActions.editExpenseItem(expenseItemId, expenseItem)),
+    showError: message => dispatch(globalMessagesActions.showError(message)),
+    showSuccess: message => dispatch(globalMessagesActions.showSuccess(message))
   };
 };
 

@@ -1,4 +1,4 @@
-import * as actions from '../actions';
+import { budget as budgetActions } from '../actions';
 
 const init = {
   current: null,
@@ -7,7 +7,7 @@ const init = {
 
 export default (state = init, action) => {
   switch (action.type) {
-    case actions.LOAD_BUDGET:
+    case budgetActions.LOAD_BUDGET:
       return {
         ...state,
         all: {

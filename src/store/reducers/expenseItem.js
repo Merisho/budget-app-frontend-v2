@@ -1,4 +1,4 @@
-import * as actions from '../actions';
+import { expenseItem as expenseItemActions } from '../actions';
 
 const init = {
   current: null,
@@ -7,7 +7,7 @@ const init = {
 
 export default (state = init, action) => {
   switch (action.type) {
-    case actions.CREATE_EXPENSE_ITEM:
+    case expenseItemActions.CREATE_EXPENSE_ITEM:
       return {
         ...state,
         all: {
@@ -16,7 +16,7 @@ export default (state = init, action) => {
         }
       };
 
-    case actions.EDIT_EXPENSE_ITEM:
+    case expenseItemActions.EDIT_EXPENSE_ITEM:
       return {
         ...state,
         all: {
@@ -25,7 +25,7 @@ export default (state = init, action) => {
         }
       };
 
-    case actions.DELETE_EXPENSE_ITEM:
+    case expenseItemActions.DELETE_EXPENSE_ITEM:
       const all = { ...state.all };
       delete all[action.payload.expenseItemId];
 
@@ -33,7 +33,7 @@ export default (state = init, action) => {
         ...state,
         all
       };
-    case actions.LOAD_EXPENSE_ITEMS:
+    case expenseItemActions.LOAD_EXPENSE_ITEMS:
       return {
         ...state,
         all: {

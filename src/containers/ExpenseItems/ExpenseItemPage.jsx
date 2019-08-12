@@ -11,9 +11,8 @@ import CreateTransaction from '../../components/Actions/Transaction/CreateTransa
 import TransactionsTable from './Transactions/TransactionsTable';
 import ExpenseItemDetails from './ExpenseItemDetails';
 import {
-  SHOW_SUCCESS,
-  SHOW_ERROR,
-  LOAD_EXPENSE_ITEMS
+  expenseItem as expenseItemActions,
+  globalMessages as globalMessagesActions
 } from '../../store/actions';
 
 const styles = {
@@ -138,9 +137,9 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 const mapDispatchToProps = dispatch => ({
-  loadExpenseItem: expenseItem => dispatch({ type: LOAD_EXPENSE_ITEMS, payload: { expenseItems: { [expenseItem.id]: expenseItem } } }),
-  showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } }),
-  showError: message => dispatch({ type: SHOW_ERROR, payload: { message } }),
+  loadExpenseItem: expenseItem => dispatch(expenseItemActions.loadExpenseItem(expenseItem)),
+  showSuccess: message => dispatch(globalMessagesActions.showSuccess(message)),
+  showError: message => dispatch(globalMessagesActions.showError(message)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ExpenseItemPage));
