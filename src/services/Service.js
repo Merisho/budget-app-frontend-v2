@@ -14,11 +14,15 @@ export default class BudgetService {
           transactionsTotal
           expenseItems {
             id
+            budgetID
             name
             total
             description
             transactionsTotal
             transactions {
+              id
+              name
+              description
               total
               creationDate
             }
@@ -30,18 +34,18 @@ export default class BudgetService {
     return res.budget;
   }
 
-  static async fetchAllUserBudgets(userId) {
+  static async fetchAllUserBudgetPreviews(userId) {
     const res = await this._postRequest(`
       {
         user(id: "${userId}") {
           budgets {
             id
-            description
             name
             total
-            allowed
             startDate
             endDate
+            description
+            allowed
           }
         }
       }

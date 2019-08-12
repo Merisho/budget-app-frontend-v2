@@ -10,6 +10,11 @@ import BackButton from '../../components/Buttons/Back';
 import CreateTransaction from '../../components/Actions/Transaction/CreateTransaction';
 import TransactionsTable from './Transactions/TransactionsTable';
 import ExpenseItemDetails from './ExpenseItemDetails';
+import {
+  SHOW_SUCCESS,
+  SHOW_ERROR,
+  LOAD_EXPENSE_ITEMS
+} from '../../store/actions';
 
 const styles = {
   transactionSearch: {
@@ -31,7 +36,7 @@ class ExpenseItemPage extends Component {
   }
 
   componentDidMount() {
-    if (!this.props.expenseItem || this.props.expenseItem.id !== this.expenseItemId) {
+    if (!this.props.expenseItem) {
       this.loadExpenseItem(this.expenseItemId);
     } else {
       this.setState({
@@ -45,7 +50,7 @@ class ExpenseItemPage extends Component {
     this.loading();
 
     const expenseItem = await Service.fetchExpenseItem(id);
-    this.props.setExpenseItem(expenseItem);
+    this.props.loadExpenseItem(expenseItem);
     this.setState({
       displayedTransactions: expenseItem.transactions
     });
@@ -125,13 +130,17 @@ class ExpenseItemPage extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  expenseItem: state.currentExpenseItem
-});
+const mapStateToProps = (state, ownProps) => {
+  const { id } = ownProps.match.params;
+
+  return {
+    expenseItem: state.expenseItem.all[id]
+  };
+};
 const mapDispatchToProps = dispatch => ({
-  setExpenseItem: expenseItem => dispatch({ type: 'SET_CURRENT_EXPENSE_ITEM', payload: { expenseItem } }),
-  showSuccess: message => dispatch({ type: 'SHOW_SUCCESS', payload: { message } }),
-  showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } }),
+  loadExpenseItem: expenseItem => dispatch({ type: LOAD_EXPENSE_ITEMS, payload: { expenseItems: { [expenseItem.id]: expenseItem } } }),
+  showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } }),
+  showError: message => dispatch({ type: SHOW_ERROR, payload: { message } }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ExpenseItemPage));

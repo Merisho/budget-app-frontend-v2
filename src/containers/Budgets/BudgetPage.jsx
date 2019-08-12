@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Input from '@material-ui/core/Input';
 import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { connect, batch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
 import Loading from '../../components/Loading/Loading';
@@ -12,6 +12,15 @@ import BudgetDetails from './BudgetDetails';
 import Service from '../../services/Service';
 import DailyChart from './DailyChart';
 import CreateExpenseItem from '../../components/Actions/CreateExpenseItem/CreateExpenseItem';
+import {
+  SHOW_ERROR,
+  SHOW_SUCCESS,
+  LOAD_BUDGET,
+  CREATE_EXPENSE_ITEM,
+  DELETE_EXPENSE_ITEM,
+  EDIT_EXPENSE_ITEM,
+  LOAD_EXPENSE_ITEMS
+} from '../../store/actions';
 
 const styles = {
   expenseItemsSeacrh: {
@@ -37,7 +46,7 @@ class BudgetPage extends Component {
   }
 
   componentDidMount() {
-    if (!this.props.budget || this.props.budget.id !== this.budgetId) {
+    if (!this.props.budget) {
       this.loadBudget(this.budgetId);
     } else {
       this.setState({
@@ -51,11 +60,10 @@ class BudgetPage extends Component {
     this.loading();
 
     const budget = await Service.fetchBudget(budgetId);
+    this.props.loadBudget(budget);
     this.setState({
       displayedExpenseItems: budget.expenseItems || []
     });
-
-    this.props.setBudget(budget);
 
     this.loaded();
   }
@@ -140,21 +148,55 @@ class BudgetPage extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    budget: state.currentBudget
-  };
+const mapStateToProps = (state, ownProps) => {
+    const { id } = ownProps.match.params;
+    const budget = state.budget.all[id];
+    const expenseItems = [];
+
+    for (const itemId in state.expenseItem.all) {
+      const item = state.expenseItem.all[itemId];
+      if (item.budgetID === id) {
+        expenseItems.push(item);
+      }
+    }
+
+    if (!budget) {
+      return {
+        budget: null
+      };
+    }
+
+    return {
+      budget: {
+        ...budget,
+        expenseItems
+      }
+    }
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setBudget: budget => dispatch({ type: 'SET_CURRENT_BUDGET', payload: { budget } }),
-    createExpenseItem: expenseItem => dispatch({ type: 'CREATE_EXPENSE_ITEM', payload: { expenseItem } }),
-    deleteExpenseItem: expenseItemId => dispatch({ type: 'DELETE_EXPENSE_ITEM', payload: { expenseItemId } }),
-    editExpenseItem: (expenseItemId, expenseItem) => dispatch({ type: 'EDIT_EXPENSE_ITEM', payload: { expenseItemId, expenseItem } }),
-    showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } }),
-    showSuccess: message => dispatch({ type: 'SHOW_SUCCESS', payload: { message } })
+    loadBudget: budget => {
+      const { expenseItems: expenseItemsArr } = budget;
+      const expenseItems = expenseItemsArrToObj(expenseItemsArr);
+      batch(() => {
+        dispatch({ type: LOAD_BUDGET, payload: { budget } });
+        dispatch({ type: LOAD_EXPENSE_ITEMS, payload: { expenseItems } });
+      });
+    },
+    createExpenseItem: expenseItem => dispatch({ type: CREATE_EXPENSE_ITEM, payload: { expenseItem } }),
+    deleteExpenseItem: expenseItemId => dispatch({ type: DELETE_EXPENSE_ITEM, payload: { expenseItemId } }),
+    editExpenseItem: (expenseItemId, expenseItem) => dispatch({ type: EDIT_EXPENSE_ITEM, payload: { expenseItemId, expenseItem } }),
+    showError: message => dispatch({ type: SHOW_ERROR, payload: { message } }),
+    showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } })
   };
 };
+
+function expenseItemsArrToObj(expenseItemsArr) {
+  const expenseItems = {};
+    expenseItemsArr.forEach(i => expenseItems[i.id] = i);
+
+    return expenseItems;
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(BudgetPage)));

@@ -8,6 +8,10 @@ import BudgetTile from './BudgetTile';
 import Loading from '../../components/Loading/Loading';
 import Service from '../../services/Service';
 import CreateBudget from '../../components/Actions/CreateBudget/CreateBudget';
+import {
+  SHOW_ERROR,
+  SHOW_SUCCESS
+} from '../../store/actions';
 
 const styles = theme => ({
   actionBar: {
@@ -23,15 +27,11 @@ class Budgets extends Component {
     super(props);
 
     this.state = {
-      displayedBudgets: []
+      displayedBudgets: [],
+      loading: true
     };
-  }
 
-  static getDerivedStateFromProps(props, state) {
-    return {
-      ...state,
-      displayedBudgets: props.budgets || []
-    };
+    this.budgets = [];
   }
 
   componentDidMount() {
@@ -43,34 +43,36 @@ class Budgets extends Component {
       throw new Error('No user');
     }
 
-    if (!this.props.budgets) {
-      const budgets = await Service.fetchAllUserBudgets(this.props.user.id) || [];
-      this.setState({
-        displayedBudgets: budgets
-      });
+    this.setState({
+      loading: true
+    });
 
-      this.props.setAllBudgets(budgets);
-    }
-  }
+    this.budgets = await Service.fetchAllUserBudgetPreviews(this.props.user.id) || [];
+
+    this.setState({
+      loading: false,
+      displayedBudgets: [ ...this.budgets ]
+    });
+}
 
   searchBudget(query) {
     this.setState({
-      displayedBudgets: this.props.budgets.filter(b => b.name.includes(query))
+      displayedBudgets: this.budgets.filter(b => b.name.includes(query))
     });
   }
 
   handleBudgetCreated = budget => {
-    this.props.createBudget(budget);
+    this.loadBudgets();
     this.props.showSuccess(`Budget "${budget.name}" has been created`);
   }
 
   budgetDeleted = budget => {
-    this.props.deleteBudget(budget.id);
+    this.loadBudgets();
     this.props.showSuccess(`Budget "${budget.name}" has been deleted`);
   }
 
   budgetEdited = budget => {
-    this.props.editBudget(budget.id, budget);
+    this.loadBudgets();
     this.props.showSuccess(`Budget "${budget.name}" has been edited`);
   }
 
@@ -94,7 +96,7 @@ class Budgets extends Component {
     const { classes } = this.props;
     return (
       <div>
-        <Loading inProgress={!this.props.budgets}>
+        <Loading inProgress={this.state.loading}>
           <div className={classes.actionBar}>
             <Input type="text" placeholder="Search" onChange={event => this.searchBudget(event.target.value)} className={classes.search} />
             <CreateBudget user={this.props.user} created={this.handleBudgetCreated} />
@@ -103,7 +105,7 @@ class Budgets extends Component {
           {this.state.displayedBudgets.filter(this.isCurrentBudget).map(budget => {
             return <BudgetTile budget={budget} key={budget.id} deleted={this.budgetDeleted} edited={this.budgetEdited} onError={this.budgetTileError} />
           })}
-          <Typography variant="h2">Inactive</Typography>
+          <Typography variant="h2">History</Typography>
           {this.state.displayedBudgets.filter(this.isNotCurrentBudget).map(budget => {
             return <BudgetTile budget={budget} key={budget.id} deleted={this.budgetDeleted} edited={this.budgetEdited} onError={this.budgetTileError} />
           })}
@@ -113,17 +115,14 @@ class Budgets extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  user: state.user,
-  budgets: state.allBudgets
-});
+const mapStateToProps = state => {
+  return {
+    user: state.user
+  };
+};
 const mapDispatchToProps = dispatch => ({
-  setAllBudgets: budgets => dispatch({ type: 'SET_ALL_BUDGETS', payload: { budgets } }),
-  createBudget: budget => dispatch({ type: 'CREATE_BUDGET', payload: { budget } }),
-  editBudget: (budgetId, budget) => dispatch({ type: 'EDIT_BUDGET', payload: { budgetId, budget } }),
-  deleteBudget: budgetId => dispatch({ type: 'DELETE_BUDGET', payload: { budgetId } }),
-  showError: message => dispatch({ type: 'SHOW_ERROR', payload: { message } }),
-  showSuccess: message => dispatch({ type: 'SHOW_SUCCESS', payload: { message } })
+  showError: message => dispatch({ type: SHOW_ERROR, payload: { message } }),
+  showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } })
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Budgets));
