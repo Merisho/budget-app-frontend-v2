@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { SET_USER } from '../../store/actions';
+import { user as userActions } from '../../store/actions';
 import Service from '../../services/Service';
 
 function Auth(props) {
@@ -56,7 +56,7 @@ const mapStateToProps = state => ({
   user: state.user
 });
 const mapDispatchToProps = dispatch => ({
-  setUser: user => dispatch({ type: SET_USER, payload: { user } })
+  setUser: user => dispatch(userActions.setUser(user))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);

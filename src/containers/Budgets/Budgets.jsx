@@ -8,10 +8,7 @@ import BudgetTile from './BudgetTile';
 import Loading from '../../components/Loading/Loading';
 import Service from '../../services/Service';
 import CreateBudget from '../../components/Actions/CreateBudget/CreateBudget';
-import {
-  SHOW_ERROR,
-  SHOW_SUCCESS
-} from '../../store/actions';
+import { globalMessages as globalMessagesActions } from '../../store/actions';
 
 const styles = theme => ({
   actionBar: {
@@ -121,8 +118,8 @@ const mapStateToProps = state => {
   };
 };
 const mapDispatchToProps = dispatch => ({
-  showError: message => dispatch({ type: SHOW_ERROR, payload: { message } }),
-  showSuccess: message => dispatch({ type: SHOW_SUCCESS, payload: { message } })
+  showError: message => dispatch(globalMessagesActions.showError(message)),
+  showSuccess: message => dispatch(globalMessagesActions.showSuccess(message))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Budgets));

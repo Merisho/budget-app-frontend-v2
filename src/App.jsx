@@ -12,10 +12,7 @@ import BudgetPage from './containers/Budgets/BudgetPage';
 import ExpenseItemPage from './containers/ExpenseItems/ExpenseItemPage';
 import StatusSnackbar from './components/Snackbars/StatusSnackbar';
 import withAuth from './higherOrderComponents/withAuth';
-import {
-  HIDE_ERROR,
-  HIDE_SUCCESS
-} from './store/actions';
+import { globalMessages as globalMessagesActions } from './store/actions';
 
 const styles = theme => ({
   root: {
@@ -68,8 +65,8 @@ const mapStateToProps = state => ({
   showSuccess: state.globalMessages.showSuccess
 });
 const mapDispatchToProps = dispatch => ({
-  hideError: () => dispatch({ type: HIDE_ERROR }),
-  hideSuccess: () => dispatch({ type: HIDE_SUCCESS })
+  hideError: () => dispatch(globalMessagesActions.hideError()),
+  hideSuccess: () => dispatch(globalMessagesActions.hideSuccess())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(
