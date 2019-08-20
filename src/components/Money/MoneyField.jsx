@@ -2,8 +2,10 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
+import format from './format';
+
 function MoneyField(props) {
-  const [ value, setValue ] = React.useState(formatDigits(props.defaultValue  || 0));
+  const [ value, setValue ] = React.useState(format(props.defaultValue  || 0));
 
   function change(e) {
     const total = prepareTotal(e.target.value);
@@ -11,7 +13,7 @@ function MoneyField(props) {
       return;
     }
     
-    setValue(formatDigits(total));
+    setValue(format(total));
     props.onChange && props.onChange(total);
   }
 
@@ -24,30 +26,10 @@ function MoneyField(props) {
       value={value}
       onChange={change}
       InputProps={{
-        startAdornment: <InputAdornment position="start">{props.currencyPrefix}</InputAdornment>,
+        startAdornment: <InputAdornment position="start">{props.currencyPrefix || '₴'}</InputAdornment>,
       }}
     />
   );
-}
-
-function formatDigits(n) {
-  const str = Math.abs(n).toString();
-
-  const mod = str.length % 3;
-  let formatted = str.slice(0, mod);
-  for (let i = mod; i <= str.length - 3; i += 3) {
-      if (formatted !== '') {
-          formatted += ',';
-      }
-
-      formatted += str.slice(i, i + 3);
-  }
-
-  if (n < 0) {
-      formatted = '-' + formatted;
-  }
-
-  return formatted;
 }
 
 function prepareTotal(total) {
