@@ -71,7 +71,7 @@ function StatusSnackbar(props) {
 
 StatusSnackbar.propTypes = {
   variant: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired,
+  message: PropTypes.string,
   open: PropTypes.bool,
   handleClose: PropTypes.func.isRequired
 };
