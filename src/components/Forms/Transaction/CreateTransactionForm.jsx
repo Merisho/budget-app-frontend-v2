@@ -101,7 +101,7 @@ function CreateTransactionForm(props) {
       </DialogContent>
       <DialogActions>
         <Button onClick={props.handleClose} color="primary">Cancel</Button>
-        <Button onClick={create} color="primary">Create</Button>
+        <Button onClick={create} className="create-transaction-button" color="primary">Create</Button>
       </DialogActions>
     </Dialog>
   );
