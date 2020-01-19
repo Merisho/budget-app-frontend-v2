@@ -190,9 +190,9 @@ const mapDispatchToProps = dispatch => {
 
 function expenseItemsArrToObj(expenseItemsArr) {
   const expenseItems = {};
-    expenseItemsArr.forEach(i => expenseItems[i.id] = i);
+  (expenseItemsArr || []).forEach(i => expenseItems[i.id] = i);
 
-    return expenseItems;
+  return expenseItems;
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(BudgetPage)));
