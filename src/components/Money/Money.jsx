@@ -3,6 +3,8 @@ import green from '@material-ui/core/colors/green';
 import red from '@material-ui/core/colors/red';
 import { withStyles } from '@material-ui/core';
 
+import format from './format';
+
 const styles = {
   positive: {
     color: green[400]
@@ -19,33 +21,13 @@ function money(props) {
     className = value > 0 ? classes.positive : classes.negative;
   }
 
-  const preparedValue = `₴${formatDigits(Math.round(+value))}`;
+  const preparedValue = `₴${format(Math.round(+value))}`;
 
   return (
     <span className={className}>
       {preparedValue}
     </span>
   );
-}
-
-function formatDigits(n) {
-  const str = Math.abs(n).toString();
-
-  const mod = str.length % 3;
-  let formatted = str.slice(0, mod);
-  for (let i = mod; i <= str.length - 3; i += 3) {
-      if (formatted !== '') {
-          formatted += ',';
-      }
-
-      formatted += str.slice(i, i + 3);
-  }
-
-  if (n < 0) {
-      formatted = '-' + formatted;
-  }
-
-  return formatted;
 }
 
 export default withStyles(styles)(money);
