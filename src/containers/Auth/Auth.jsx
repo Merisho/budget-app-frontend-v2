@@ -6,26 +6,7 @@ import Service from '../../services/Service';
 
 function Auth(props) {
   React.useEffect(() => {
-    (async function() {
-      if (props.user) {
-        return;
-      }
-  
-      const accessToken = accessTokenFromURL() || localStorage.getItem('accessToken');
-      if (!accessToken) {
-        redirectToSignIn();
-        return;
-      }
-  
-      const user = await Service.authUser(accessToken);
-
-      if (user) {
-        props.setUser(user);
-        localStorage.setItem('accessToken', accessToken);
-      } else {
-        redirectToSignIn();
-      }
-    })();
+    authenticate();
   });
 
   function accessTokenFromURL() {
@@ -41,6 +22,27 @@ function Auth(props) {
     }
 
     return;
+  }
+
+  async function authenticate() {
+    if (props.user) {
+      return;
+    }
+
+    const accessToken = accessTokenFromURL() || localStorage.getItem('accessToken');
+    if (!accessToken) {
+      redirectToSignIn();
+      return;
+    }
+
+    const user = await Service.authUser(accessToken);
+
+    if (user) {
+      props.setUser(user);
+      localStorage.setItem('accessToken', accessToken);
+    } else {
+      redirectToSignIn();
+    }
   }
 
   function redirectToSignIn() {
