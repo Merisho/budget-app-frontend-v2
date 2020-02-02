@@ -10,6 +10,7 @@ import Dashboard from './containers/Dashboard/Dashboard';
 import Budgets from './containers/Budgets/Budgets';
 import BudgetPage from './containers/Budgets/BudgetPage';
 import ExpenseItemPage from './containers/ExpenseItems/ExpenseItemPage';
+import CreateTransactionMobile from './containers/Transactions/CreateTransactionMobile';
 import StatusSnackbar from './components/Snackbars/StatusSnackbar';
 import withAuth from './higherOrderComponents/withAuth';
 import { globalMessages as globalMessagesActions } from './store/actions';
@@ -42,6 +43,7 @@ class App extends React.Component {
               <Route path="/budgets" component={Budgets} exact />
               <Route path="/budgets/:id" component={BudgetPage} exact />
               <Route path="/budgets/expenseitem/:id" component={ExpenseItemPage} exact />
+              <Route path="/addtransaction" component={CreateTransactionMobile} exact />
               <Route render={() => <h1>Not Found</h1>} />
             </Switch>
           </main>

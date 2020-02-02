@@ -35,14 +35,6 @@ const styles = theme => ({
   },
   descriptionCell: {
     width: '40%'
-  },
-  addItem: {
-    background: theme.palette.secondary.main,
-    color: theme.palette.secondaryText.white
-  },
-  approveNewItem: {
-    color: theme.palette.action.approve,
-    cursor: 'pointer'
   }
 });
 

@@ -54,6 +54,48 @@ export default class BudgetService {
     return res.user.budgets;
   }
 
+  static async fetchAllUserBudgets(userId) {
+    const res = await this._postRequest(`
+      {
+        user(id: "${userId}") {
+          budgets {
+            id
+            name
+            total
+            startDate
+            endDate
+            description
+            free
+            allowed
+            transactionsTotal
+            expenseItems {
+              id
+              budgetID
+              name
+              total
+              description
+              transactionsTotal
+              transactions {
+                id
+                name
+                description
+                total
+                creationDate
+              }
+            }
+          }
+        }
+      }
+    `);
+
+    return res.user.budgets;
+  }
+
+  static async fetchActiveUserBudgets(userId) {
+    const now = Date.now();
+    return (await this.fetchAllUserBudgets(userId)).filter(b => new Date(b.endDate).getTime() > now);
+  }
+
   static async fetchExpenseItem(expenseItemId) {
     const res = await this._postRequest(`
       {
@@ -231,8 +273,8 @@ export default class BudgetService {
     const params = [
       `expenseItemID: "${transaction.expenseItemID}"`,
       `name: "${transaction.name}"`,
-      `total: ${transaction.total}`,
-      `creationDate: "${transaction.creationDate}"`
+      `total: ${+transaction.total}`,
+      `creationDate: "${transaction.creationDate.toISOString()}"`
     ];
 
     if (transaction.description) {

@@ -36,7 +36,7 @@ const theme = createMuiTheme({
       dark: green[700],
     },
     secondaryText: {
-      main: '#ffffff'
+      main: grey[50]
     }
   },
   actionIcons: {
