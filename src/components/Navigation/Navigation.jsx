@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -22,7 +21,7 @@ const styles = theme => ({
     }
   },
   drawerPaper: {
-    width: 0,
+    width: 1,
     position: 'relative',
     whiteSpace: 'nowrap',
     transition: theme.transitions.create('width', {

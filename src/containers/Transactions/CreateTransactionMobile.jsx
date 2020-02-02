@@ -5,11 +5,18 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
+import Button from '@material-ui/core/Button';
+import DoneIcon from '@material-ui/icons/Done';
+import Loading from '../../components/Loading/Loading';
 
 import Service from '../../services/Service';
 import Money from '../../components/Money/Money';
+import CreateTransactionForm from '../../components/Forms/Transaction/CreateTransactionForm';
+import {
+  globalMessages as globalMessagesActions
+} from '../../store/actions';
 
-const styles = {
+const styles = theme => ({
   select: {
     marginTop: 50,
     width: '100%',
@@ -19,18 +26,30 @@ const styles = {
     marginTop: 10,
   },
 
-  createForm: {
+  form: {
     marginTop: 30,
-  }
-};
+  },
 
-function addTransactionMobile(props) {
+  createBtn: {
+    width: '100%',
+    height: 50,
+    marginTop: 20,
+    color: theme.palette.secondaryText.main
+  }
+});
+
+function AddTransactionMobile(props) {
   const [budgets, setBudgets] = React.useState([]);
   const [selectedBudget, setSelectedBudget] = React.useState({id: ''});
   const [selectedExpenseItem, setSelectedExpenseItem] = React.useState({id: ''});
+  const [loading, setLoading] = React.useState(false);
+  let getFormData = () => {};
+  let resetForm = () => {};
   
   React.useEffect(() => {
     (async () => {
+      setLoading(true);
+
       const budgets = await Service.fetchActiveUserBudgets(props.user.id);
       setBudgets(budgets);
 
@@ -42,6 +61,8 @@ function addTransactionMobile(props) {
           setSelectedExpenseItem(budget.expenseItems[0]);
         }
       }
+
+      setLoading(false);
     })()
   }, [props.user.id]);
 
@@ -59,9 +80,37 @@ function addTransactionMobile(props) {
     setSelectedExpenseItem(item);
   }
 
+  async function createTransaction() {
+    const data = getFormData();
+    if (!data) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await Service.addTransaction({
+        name: data.name,
+        total: data.total,
+        description: data.description,
+        expenseItemID: selectedExpenseItem.id,
+        creationDate: data.creationDate
+      });
+
+      props.showSuccess('Created successfully');
+    } catch(err) {
+      console.error(err);
+      props.showError('Error. Please contact the developer');
+    }
+
+    resetForm();
+
+    setLoading(false);
+  }
+
   const {classes} = props;
   return (
-    <div>
+    <Loading inProgress={loading}>
       <FormControl className={classes.select}>
         <InputLabel shrink id="select-budget-label">
           Budget
@@ -86,11 +135,17 @@ function addTransactionMobile(props) {
         Spent: <Money value={selectedExpenseItem.transactionsTotal || 0} />
       </div>
       {selectedExpenseItem.id ? (
-        <form className={classes.createForm}>
-          form
-        </form>
+        <CreateTransactionForm className={classes.form}>{(getData, reset) => {
+          getFormData = getData;
+          resetForm = reset;
+        }}</CreateTransactionForm>
       ) : null}
-    </div>
+      <div>
+        <Button onClick={createTransaction} variant="contained" color="secondary" className={classes.createBtn}>
+          <DoneIcon fontSize="large" />
+        </Button>
+      </div>
+    </Loading>
   );
 }
 
@@ -99,6 +154,9 @@ const mapStateToProps = state => {
     user: state.user
   };
 };
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+  showSuccess: message => dispatch(globalMessagesActions.showSuccess(message)),
+  showError: message => dispatch(globalMessagesActions.showError(message)),
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(addTransactionMobile));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(AddTransactionMobile));
