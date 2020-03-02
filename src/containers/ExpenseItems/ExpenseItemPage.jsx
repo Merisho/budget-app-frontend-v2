@@ -50,8 +50,9 @@ class ExpenseItemPage extends Component {
 
     const expenseItem = await Service.fetchExpenseItem(id);
     this.props.loadExpenseItem(expenseItem);
+    const transactions = expenseItem.transactions.sort((t1, t2) => new Date(t2.creationDate) - new Date(t1.creationDate));
     this.setState({
-      displayedTransactions: expenseItem.transactions
+      displayedTransactions: transactions
     });
 
     this.loaded();
@@ -62,7 +63,7 @@ class ExpenseItemPage extends Component {
     this.loadExpenseItem(this.expenseItemId);
   }
 
-  loading() {
+  loading() { 
     this.setState({ loading: true });
   }
 
