@@ -36,7 +36,8 @@ class Budgets extends Component {
   }
 
   async loadBudgets() {
-    if (!this.props.user.id) {
+    const userID = this.props.user.id;
+    if (!userID) {
       throw new Error('No user');
     }
 
@@ -44,7 +45,10 @@ class Budgets extends Component {
       loading: true
     });
 
-    this.budgets = await Service.fetchAllUserBudgetPreviews(this.props.user.id) || [];
+    this.budgets = await Service.fetchAllUserBudgetPreviews(userID) || [];
+    const isShared = b => (b.collaborators && b.collaborators.length);
+    const isOwn = b => b.owner.id === userID;
+    this.budgets = this.budgets.map(b => ({ ...b, own: isOwn(b), shared: isShared(b) }));
 
     this.setState({
       loading: false,

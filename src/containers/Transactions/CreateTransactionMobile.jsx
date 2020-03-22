@@ -15,6 +15,7 @@ import CreateTransactionForm from '../../components/Forms/Transaction/CreateTran
 import {
   globalMessages as globalMessagesActions
 } from '../../store/actions';
+import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
   select: {
@@ -35,6 +36,10 @@ const styles = theme => ({
     height: 50,
     marginTop: 20,
     color: theme.palette.secondaryText.main
+  },
+
+  sharedBudgetCaption: {
+    marginLeft: 10
   }
 });
 
@@ -116,7 +121,14 @@ function AddTransactionMobile(props) {
           Budget
         </InputLabel>
         <Select value={selectedBudget.id} onChange={handleBudgetChange} labelid="select-budget-label">
-          {budgets.map(b => <MenuItem value={b.id} key={b.id}>{b.name}</MenuItem>)}
+        {budgets.map(b => {
+          return (
+            <MenuItem value={b.id} key={b.id}>
+              {b.name}
+              {(b.owner.id === props.user.id ? null : <Typography variant="caption" className={classes.sharedBudgetCaption}>(shared by {b.owner.login})</Typography>)}
+            </MenuItem>
+          );
+        })}
         </Select>
       </FormControl>
 

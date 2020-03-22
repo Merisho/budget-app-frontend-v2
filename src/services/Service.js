@@ -44,8 +44,16 @@ export default class BudgetService {
             total
             startDate
             endDate
-            description
             allowed
+            owner {
+              id
+              login
+            }
+            collaborators {
+              id
+              login
+              email
+            }
           }
         }
       }
@@ -68,6 +76,10 @@ export default class BudgetService {
             free
             allowed
             transactionsTotal
+            owner {
+              id
+              login
+            }
             expenseItems {
               id
               budgetID
@@ -82,6 +94,11 @@ export default class BudgetService {
                 total
                 creationDate
               }
+            }
+            collaborators {
+              id
+              login
+              email
             }
           }
         }
@@ -257,6 +274,21 @@ export default class BudgetService {
         }
       }
     `);
+  }
+
+  static async addCollaborator(budgetId, userEmail) {
+    const res = await this._postRequest(`
+      mutation {
+        addCollaborator(id: "${budgetId}", email: "${userEmail}") {
+          collaborators {
+            id
+            login
+          }
+        }
+      }
+    `);
+
+    return res.addCollaborator;
   }
 
   static async deleteExpenseItem(expenseItemId) {

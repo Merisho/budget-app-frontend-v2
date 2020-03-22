@@ -1,9 +1,12 @@
 import React from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
 import Typography from '@material-ui/core/Typography';
 import {withStyles} from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import PeopleIcon from '@material-ui/icons/People';
+import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import { Link } from 'react-router-dom';
 
@@ -12,6 +15,7 @@ import DeleteBudgetConfirmation from './DeleteBudgetConfirmation';
 import Service from '../../services/Service';
 import EditBudgetForm from '../../components/Forms/Budget/EditBudgetForm';
 import DateValue from '../../components/Values/Date';
+import BudgetCollaborators from './BudgetCollaborators';
 
 const styles = theme => {
   const nameColor = theme.palette.primary.dark;
@@ -44,7 +48,7 @@ const styles = theme => {
       minWidth: 200,
       margin: '0 40px 30px 0',
       display: 'inline-block',
-      height: 120
+      height: 230
     },
     tile: {
       overflow: 'hidden',
@@ -54,7 +58,7 @@ const styles = theme => {
       zIndex: 1,
       '&:hover': {
         zIndex: 2,
-        height: 260,
+        height: 297,
         transition: theme.transitions.create(['height', 'z-index'], tileHeightTransitionParams),
       },
       transition: theme.transitions.create(['height', 'z-index'], {
@@ -62,11 +66,18 @@ const styles = theme => {
         delay: 700
       })
     },
-    nameLink: {
-      textDecoration: 'none'
+    tileHeader: {
+      paddingBottom: 0,
     },
-    budgetName: {
-      color: nameColor
+    tileSubheader: {
+      height: 24
+    },
+    nameLink: {
+      textDecoration: 'none',
+      color: nameColor,
+      '&:hover': {
+        color: theme.palette.primary.main
+      },
     },
     budgetStats: {
       overflow: 'hidden',
@@ -92,6 +103,11 @@ const styles = theme => {
         background: theme.palette.action.highlightedEdit
       },
       background: theme.palette.action.edit
+    },
+
+    shared: {
+      ...theme.indicators.primary,
+      textAlign: 'center',
     }
   };
 };
@@ -99,6 +115,7 @@ const styles = theme => {
 function budgetTile(props) {
   const [ confirmDeletion, setConfirmDeletion ] = React.useState(false);
   const [ openEditForm, setOpenEditForm ] = React.useState(false)
+  const [ openCollaborators, setOpenCollaborators ] = React.useState(false);
   const { budget, classes } = props;
 
   async function acceptDeletion() {
@@ -118,21 +135,56 @@ function budgetTile(props) {
       setOpenEditForm(false);
       props.edited && props.edited(editedBudget);
     } catch(err) {
-      props.onError && props.onError('Could not edit budget :( Please try again');
+      props.onError && props.onError('Could not edit the budget :( Please try again');
       console.error(err);
     }
+  }
+
+  async function handleAddColaborator(email) {
+    try {
+      const sharedBudgetData = await Service.addCollaborator(budget.id, email);
+      setOpenCollaborators(false);
+      props.edited && props.edited({ ...budget, ...sharedBudgetData });
+    } catch(err) {
+      props.onError && props.onError('Could not share the budget :( Please try again');
+      console.error(err);
+    }
+  }
+
+  let subheader = '';
+  if (budget.own) {
+    const len = budget.collaborators ? budget.collaborators.length : 0;
+    if (len > 0) {
+      subheader = `${budget.collaborators.length} collaborator${len > 1 ? 's' : ''}`;
+    }
+  } else {
+    subheader = `Shared by ${budget.owner.login}`;
   }
 
   return (
     <React.Fragment>
       <div className={classes.tileContainer}>
         <Card className={classes.tile}>
-          <CardContent className={classes.tileContent}>
-            <Link to={`/budgets/${budget.id}`} className={classes.nameLink}>
-              <Typography variant="h4" className={classes.budgetName}>
+          
+          <CardHeader
+            className={classes.tileHeader}
+            classes={{
+              subheader: classes.tileSubheader
+            }}
+            title={
+              <Link to={`/budgets/${budget.id}`} className={classes.nameLink}>
                 {budget.name}
-              </Typography>
-            </Link>
+              </Link>
+            }
+            subheader={subheader}
+            action={ budget.own ?
+              (<IconButton aria-label="share" onClick={() => setOpenCollaborators(true)}>
+                <PeopleIcon />
+              </IconButton>) : null
+            }
+          />
+
+          <CardContent className={classes.tileContent}>
             <Typography variant="h6">
               Period
             </Typography>
@@ -166,8 +218,10 @@ function budgetTile(props) {
           </div>
         </Card>
       </div>
+
       <DeleteBudgetConfirmation open={confirmDeletion} handleCancel={() => setConfirmDeletion(false)} handleOK={acceptDeletion} budgetName={budget.name} />
       <EditBudgetForm budget={budget} open={openEditForm} handleClose={() => setOpenEditForm(false)} handleEdit={applyEditedBudget} />
+      <BudgetCollaborators budget={budget} open={openCollaborators} onClose={() => setOpenCollaborators(false)} onAdd={handleAddColaborator} />
     </React.Fragment>
   );
 }

@@ -5,6 +5,7 @@ import green from '@material-ui/core/colors/green';
 import grey from '@material-ui/core/colors/grey';
 import red from '@material-ui/core/colors/red';
 import amber from '@material-ui/core/colors/amber';
+import deepPurple from '@material-ui/core/colors/deepPurple';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 const deleteColor = red[700];
@@ -37,7 +38,7 @@ const theme = createMuiTheme({
     },
     secondaryText: {
       main: grey[50]
-    }
+    },
   },
   actionIcons: {
     delete: {
@@ -47,6 +48,12 @@ const theme = createMuiTheme({
     edit: {
       color: editColor,
       cursor: 'pointer'
+    }
+  },
+  indicators: {
+    primary: {
+      backgroundColor: deepPurple[400],
+      color: '#ffffff'
     }
   },
   typography: {
