@@ -12,7 +12,8 @@ import TransactionsTable from './Transactions/TransactionsTable';
 import ExpenseItemDetails from './ExpenseItemDetails';
 import {
   expenseItem as expenseItemActions,
-  globalMessages as globalMessagesActions
+  globalMessages as globalMessagesActions,
+  budget as budgetActions,
 } from '../../store/actions';
 
 const styles = {
@@ -50,9 +51,9 @@ class ExpenseItemPage extends Component {
 
     const expenseItem = await Service.fetchExpenseItem(id);
     this.props.loadExpenseItem(expenseItem);
-    const transactions = expenseItem.transactions.sort((t1, t2) => new Date(t2.creationDate) - new Date(t1.creationDate));
+    const transactions = expenseItem.transactions || [];
     this.setState({
-      displayedTransactions: transactions
+      displayedTransactions: transactions.sort((t1, t2) => new Date(t2.creationDate) - new Date(t1.creationDate))
     });
 
     this.loaded();
@@ -61,6 +62,7 @@ class ExpenseItemPage extends Component {
   handleTransactionCreate = transaction => {
     this.props.showSuccess(`Transaction "${transaction.name}" has been created`);
     this.loadExpenseItem(this.expenseItemId);
+    this.props.outdateCurrentBudget(this.props.expenseItem.budgetID);
   }
 
   loading() { 
@@ -74,11 +76,13 @@ class ExpenseItemPage extends Component {
   handleTransactionDelete = transaction => {
     this.props.showSuccess(`Transaction "${transaction.name}" has been deleted`);
     this.loadExpenseItem(this.expenseItemId);
+    this.props.outdateCurrentBudget(this.props.expenseItem.budgetID);
   }
 
   handleTransactionEdit = transaction => {
     this.props.showSuccess(`Transaction "${transaction.name}" has been edited`);
     this.loadExpenseItem(this.expenseItemId);
+    this.props.outdateCurrentBudget(this.props.expenseItem.budgetID);
   }
 
   handleError = errMessage => {
@@ -141,6 +145,7 @@ const mapDispatchToProps = dispatch => ({
   loadExpenseItem: expenseItem => dispatch(expenseItemActions.loadExpenseItem(expenseItem)),
   showSuccess: message => dispatch(globalMessagesActions.showSuccess(message)),
   showError: message => dispatch(globalMessagesActions.showError(message)),
+  outdateCurrentBudget: budgetId => dispatch(budgetActions.outdateCurrentBudget(budgetId))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ExpenseItemPage));

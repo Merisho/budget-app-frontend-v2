@@ -1,7 +1,6 @@
 import { budget as budgetActions } from '../actions';
 
 const init = {
-  current: null,
   all: {}
 };
 
@@ -15,7 +14,11 @@ export default (state = init, action) => {
           [action.payload.budget.id]: action.payload.budget
         }
       };
+    case budgetActions.OUTDATE_BUDGET:
+      const newState = { ...state };
+      delete newState.all[action.payload.budgetId];
 
+      return newState;
     default:
       return state;
   }

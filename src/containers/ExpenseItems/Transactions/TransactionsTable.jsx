@@ -51,8 +51,7 @@ function TransactionsTable(props) {
   async function handleEdit(id, data) {
     try {
       const editedTransaction = await Service.updateTransaction(id, {
-        ...data,
-        creationDate: data.creationDate.toISOString()
+        ...data
       });
       props.onEdit(editedTransaction);
     } catch(err) {
