@@ -39,9 +39,7 @@ class ExpenseItemPage extends Component {
     if (!this.props.expenseItem) {
       this.loadExpenseItem(this.expenseItemId);
     } else {
-      this.setState({
-        displayedTransactions: this.props.expenseItem.transactions
-      });
+      this.setDisplayedTransactions(this.props.expenseItem.transactions);
       this.loaded();
     }
   }
@@ -51,12 +49,16 @@ class ExpenseItemPage extends Component {
 
     const expenseItem = await Service.fetchExpenseItem(id);
     this.props.loadExpenseItem(expenseItem);
-    const transactions = expenseItem.transactions || [];
-    this.setState({
-      displayedTransactions: transactions.sort((t1, t2) => new Date(t2.creationDate) - new Date(t1.creationDate))
-    });
+    this.setDisplayedTransactions(expenseItem.transactions);
 
     this.loaded();
+  }
+
+  setDisplayedTransactions(transactions) {
+    const t = transactions || [];
+    this.setState({
+      displayedTransactions: t.sort((t1, t2) => new Date(t2.creationDate) - new Date(t1.creationDate))
+    });
   }
 
   handleTransactionCreate = transaction => {
